@@ -1,0 +1,2889 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>StandX Guide</title>
+<meta name="description" content="StandXの仕組みを、迷わず理解する。非公式のコミュニティ制作ガイドです。">
+
+<!-- ===== OGP（URLを貼った際のサムネイル表示用） =====
+     デプロイ先: https://kintsuba1992.github.io/StandX_Guide/
+     画像は同リポジトリ直下に StandX_Guide.png として配置する想定。
+     ローカルでの確認時は og:image が読み込めなくても正常（実際にデプロイ後、
+     GitHub Pages上のURLとしてアクセス可能になって初めて機能する）。 -->
+<meta property="og:type" content="website">
+<meta property="og:title" content="StandX Guide">
+<meta property="og:description" content="StandXの仕組みを、迷わず理解する。非公式のコミュニティ制作ガイドです。">
+<meta property="og:url" content="https://kintsuba1992.github.io/StandX_Guide/">
+<meta property="og:image" content="https://kintsuba1992.github.io/StandX_Guide/StandX_Guide.png">
+<meta property="og:site_name" content="StandX Guide">
+
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="StandX Guide">
+<meta name="twitter:description" content="StandXの仕組みを、迷わず理解する。非公式のコミュニティ制作ガイドです。">
+<meta name="twitter:image" content="https://kintsuba1992.github.io/StandX_Guide/StandX_Guide.png">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&family=Spline+Sans+Mono:wght@400;500;600&family=Inter:wght@400;500;600;700&family=Noto+Sans+JP:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    /* ===== Dark (default) ===== */
+    --bg:#0B0E11;
+    --bg-card:#151920;
+    --bg-card-hover:#1B2128;
+    --text:#E4E7EB;
+    --text-dim:#8A93A0;
+    --border:#232A33;
+    --bid:#3ECF8E;      /* Beginner */
+    --bid-dim:#1F3B2E;
+    --ask:#E85C5C;      /* Standard */
+    --ask-dim:#3B2323;
+    --amber:#F0B93D;    /* 数値・SIP */
+    --accent:var(--bid);       /* ページのモードに応じて緑/赤が入る */
+    --accent-dim:var(--bid-dim);
+    --font-display: "IBM Plex Sans", "Noto Sans JP", sans-serif;
+    --font-body: "Inter", "Noto Sans JP", sans-serif;
+    --font-mono: "Spline Sans Mono", monospace;
+  }
+  /* テーマページ自身のdata-mode属性で、そのページ内のアクセント色を切り替える */
+  .page[data-mode="standard"]{
+    --accent:var(--ask);
+    --accent-dim:var(--ask-dim);
+  }
+  [data-theme="light"]{
+    --bg:#F5F6F8;
+    --bg-card:#FFFFFF;
+    --bg-card-hover:#EEF0F3;
+    --text:#1A1D21;
+    --text-dim:#6B7280;
+    --border:#DCE0E5;
+    --bid-dim:#DFF5EA;
+    --ask-dim:#FBE3E3;
+  }
+  *{box-sizing:border-box;margin:0;padding:0;}
+  body{
+    background:var(--bg);
+    color:var(--text);
+    font-family:var(--font-body);
+    line-height:1.7;
+    -webkit-font-smoothing:antialiased;
+    transition:background .2s ease, color .2s ease;
+  }
+  a{color:inherit;text-decoration:none;}
+
+  /* ===== Header ===== */
+  header{
+    position:sticky; top:0; z-index:50;
+    background:color-mix(in srgb, var(--bg) 88%, transparent);
+    backdrop-filter: blur(10px);
+    border-bottom:1px solid var(--border);
+  }
+  .header-inner{
+    max-width:1080px; margin:0 auto;
+    display:flex; align-items:center; gap:16px;
+    padding:14px 20px;
+  }
+  .logo{
+    font-family:var(--font-display);
+    font-weight:700; font-size:17px; letter-spacing:.01em;
+    display:flex; align-items:center; gap:8px;
+  }
+  .logo .dot{width:8px;height:8px;border-radius:2px;background:var(--amber);}
+  .search-bar{
+    flex:1; max-width:420px; min-width:0;
+    display:flex; align-items:center; gap:8px;
+    background:var(--bg-card);
+    border:1px solid var(--border);
+    border-radius:8px;
+    padding:9px 14px;
+    color:var(--text-dim);
+    font-size:14px;
+    cursor:text;
+    white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
+  }
+  .search-bar span{overflow:hidden; text-overflow:ellipsis; white-space:nowrap;}
+  .header-actions{
+    margin-left:auto;
+    display:flex; align-items:center; gap:14px;
+    font-size:13px; color:var(--text-dim);
+  }
+  .icon-btn{
+    width:32px;height:32px;border-radius:8px;
+    border:1px solid var(--border);
+    background:var(--bg-card);
+    display:flex;align-items:center;justify-content:center;
+    cursor:pointer; font-size:14px;
+  }
+  .icon-btn:hover{background:var(--bg-card-hover);}
+  select.lang-select{
+    background:var(--bg-card); color:var(--text);
+    border:1px solid var(--border); border-radius:8px;
+    padding:7px 10px; font-size:13px; font-family:var(--font-body);
+  }
+
+  /* 狭幅画面：検索窓・言語セレクタ・モードトグルを圧縮し、ヘッダーの重なり崩れを防止 */
+  @media(max-width:480px){
+    .header-inner{padding:10px 12px; gap:6px;}
+    .logo{font-size:13px; white-space:nowrap;}
+    .logo .dot{display:none;} /* ロゴ幅をさらに切り詰める */
+    .search-bar{padding:7px 8px; font-size:11px;}
+    select.lang-select{padding:6px 4px; font-size:10px; max-width:56px;}
+    .header-actions{gap:6px;}
+    .icon-btn{width:28px; height:28px; font-size:12px; flex-shrink:0;}
+  }
+  .header-mode-toggle{
+    display:none; /* JSで theme ページ滞在時のみ flex に */
+    align-items:center; gap:2px;
+    background:var(--bg-card); border:1px solid var(--border);
+    border-radius:8px; padding:3px;
+  }
+  .header-mode-toggle.show{display:flex;}
+  .header-mode-btn{
+    font-family:var(--font-display); font-size:12px;
+    padding:6px 12px; border-radius:6px; cursor:pointer;
+    color:var(--text-dim); white-space:nowrap;
+  }
+  .header-mode-btn.active.beginner{background:var(--bid-dim); color:var(--bid);}
+  .header-mode-btn.active.standard{background:var(--ask-dim); color:var(--ask);}
+  @media(max-width:640px){
+    .header-mode-btn{padding:6px 9px; font-size:11px;}
+  }
+  @media(max-width:400px){
+    /* さらに狭い画面：モードトグルのラベルを圧縮し、検索窓を最小化する。
+       640px用ルールより後に定義し、確実に上書きされるようにする。 */
+    .header-mode-btn{padding:5px 7px; font-size:10px;}
+    .search-bar{padding:6px; min-width:32px;}
+    .search-bar span{display:none;} /* アイコンのみ残し、プレースホルダー文言を隠す */
+  }
+  @media(max-width:360px){
+    /* 320〜360px程度の非常に狭い画面向け：ロゴを短縮し、言語セレクタもさらに圧縮する */
+    .logo-suffix{display:none;} /* 「StandX」のみ残し「Guide」を省略 */
+    select.lang-select{max-width:44px; padding:5px 3px; font-size:9px;}
+    .header-mode-btn{padding:4px 6px;}
+  }
+
+  /* ===== Breadcrumb ===== */
+  .crumb{
+    max-width:1080px; margin:0 auto; padding:18px 20px 0;
+    font-family:var(--font-display); font-size:12px; color:var(--text-dim);
+    display:flex; align-items:center; gap:6px;
+  }
+  .crumb .sep{opacity:.4;}
+  .crumb .current{color:var(--text);}
+
+  /* ===== Hero ===== */
+  .hero{
+    max-width:1080px; margin:0 auto; padding:64px 20px 40px;
+  }
+  .hero-eyebrow{
+    font-family:var(--font-display); font-size:12px; color:var(--amber);
+    letter-spacing:.08em; text-transform:uppercase;
+    display:flex; align-items:center; gap:8px; margin-bottom:18px;
+  }
+  .hero-eyebrow::before{content:"";width:18px;height:1px;background:var(--amber);}
+  h1.hero-title{
+    font-family:var(--font-display); font-weight:700;
+    font-size:clamp(32px,5vw,52px); line-height:1.15;
+    letter-spacing:-.01em; margin-bottom:16px;
+  }
+  .hero-desc{
+    color:var(--text-dim); font-size:16px; max-width:520px;
+  }
+
+  /* ===== Entry cards (Beginner / Standard) ===== */
+  .entries{
+    max-width:1080px; margin:0 auto; padding:0 20px 56px;
+    display:grid; grid-template-columns:1fr 1fr; gap:16px;
+  }
+  @media(max-width:640px){ .entries{grid-template-columns:1fr;} }
+  .entry-card{
+    position:relative; overflow:hidden;
+    border-radius:14px; border:1px solid var(--border);
+    background:var(--bg-card);
+    padding:28px 26px;
+    cursor:pointer;
+    transition:transform .15s ease, border-color .15s ease;
+  }
+  .entry-card:hover{transform:translateY(-2px);}
+  .entry-card.beginner:hover{border-color:var(--bid);}
+  .entry-card.standard:hover{border-color:var(--ask);}
+  .entry-tag{
+    display:inline-flex; align-items:center; gap:6px;
+    font-family:var(--font-display); font-size:11px;
+    padding:4px 9px; border-radius:5px; margin-bottom:16px;
+    letter-spacing:.04em;
+  }
+  .entry-card.beginner .entry-tag{background:var(--bid-dim); color:var(--bid);}
+  .entry-card.standard .entry-tag{background:var(--ask-dim); color:var(--ask);}
+  .entry-card .tick{width:6px;height:6px;border-radius:50%;}
+  .entry-card.beginner .tick{background:var(--bid);}
+  .entry-card.standard .tick{background:var(--ask);}
+  .entry-title{
+    font-family:var(--font-display); font-weight:600; font-size:22px;
+    margin-bottom:8px;
+  }
+  .entry-sub{color:var(--text-dim); font-size:14px; margin-bottom:20px;}
+  .entry-themes{
+    display:flex; flex-wrap:wrap; gap:6px;
+  }
+  .theme-chip{
+    font-size:12px; padding:4px 10px; border-radius:20px;
+    border:1px solid var(--border); color:var(--text-dim);
+    font-family:var(--font-display);
+  }
+
+  /* ===== Section label ===== */
+  .section-label{
+    max-width:1080px; margin:0 auto; padding:0 20px 14px;
+    font-family:var(--font-display); font-size:12px; color:var(--text-dim);
+    letter-spacing:.06em; text-transform:uppercase;
+    display:flex; align-items:center; gap:10px;
+  }
+  .section-label::after{content:"";flex:1;height:1px;background:var(--border);}
+
+  /* ===== Utility row (調べる/深く知る) ===== */
+  .util-row{
+    max-width:1080px; margin:0 auto; padding:0 20px 72px;
+    display:grid; grid-template-columns:repeat(4,1fr); gap:12px;
+  }
+  @media(max-width:760px){ .util-row{grid-template-columns:repeat(2,1fr);} }
+  .util-card{
+    border:1px solid var(--border); border-radius:10px;
+    padding:16px; background:var(--bg-card);
+    font-size:13px; cursor:pointer;
+  }
+  .util-card:hover{background:var(--bg-card-hover);}
+  .util-card .util-icon{color:var(--amber); font-family:var(--font-display); font-size:11px; margin-bottom:8px; display:block;}
+
+  /* ===================================================== */
+  /* DUSD Beginner ページ                                    */
+  /* ===================================================== */
+  .page{display:none;}
+  .page.active{display:block;}
+
+  .page-header{
+    max-width:820px; margin:0 auto; padding:36px 20px 8px;
+  }
+  .page-badge{
+    display:inline-flex; align-items:center; gap:8px;
+    font-family:var(--font-display); font-size:12px;
+    background:var(--accent-dim); color:var(--accent);
+    padding:5px 11px; border-radius:6px; margin-bottom:18px;
+  }
+  h1.page-title{
+    font-family:var(--font-display); font-weight:700;
+    font-size:clamp(28px,4vw,40px); margin-bottom:10px;
+  }
+  .page-lead{
+    color:var(--text); font-size:19px; font-weight:500;
+    max-width:600px; line-height:1.6;
+    padding:16px 18px; margin-top:4px;
+    background:var(--bg-card); border-left:3px solid var(--accent);
+    border-radius:0 8px 8px 0;
+  }
+
+  .content{
+    max-width:820px; margin:0 auto; padding:36px 20px 0;
+  }
+  .content h2{
+    font-family:var(--font-display); font-weight:600; font-size:20px;
+    margin:36px 0 14px;
+  }
+  .content p{font-size:15.5px; color:var(--text); margin-bottom:14px;}
+  .content p .term{
+    color:var(--amber); border-bottom:1px dashed var(--amber);
+    cursor:pointer; font-weight:500;
+  }
+
+  /* ===== Depth Bar (Signature element) ===== */
+  /* ===== Layer Stack（関係性表示・数値なし） ===== */
+  /* ===== Hub Graph（放射状・対等接続。優劣・数値は一切表現しない） ===== */
+  .hubgraph{
+    margin:28px 0 40px;
+    border:1px solid var(--border); border-radius:12px;
+    background:var(--bg-card); padding:22px 22px 18px;
+  }
+  .hubgraph-title{
+    font-family:var(--font-display); font-size:11px; color:var(--text-dim);
+    letter-spacing:.06em; text-transform:uppercase; margin-bottom:6px;
+  }
+  .hub-svg{width:100%; height:auto; display:block;}
+  .hub-line{
+    stroke:var(--accent); stroke-width:1.5; opacity:0;
+    transition:opacity .6s ease;
+  }
+  .hub-line.in{opacity:.5;}
+  .hub-node-circle{
+    fill:var(--bg-card); stroke:var(--accent); stroke-width:1.5;
+  }
+  .hub-node-circle.center{fill:var(--accent); stroke:none;}
+  .hub-node{opacity:0; transform:scale(.8); transform-origin:center;
+    transition:opacity .5s ease, transform .5s ease;}
+  .hub-node.in{opacity:1; transform:scale(1);}
+  .hub-label{
+    font-family:var(--font-display); font-size:12px; font-weight:500;
+    fill:var(--text);
+  }
+  .hub-label.center{fill:var(--bg); font-weight:600;}
+
+  .flow-note{
+    font-family:var(--font-display); font-size:12px; color:var(--text-dim);
+    padding-top:10px; border-top:1px solid var(--border); margin-top:4px;
+  }
+
+  /* ===== Path Rows（対等な複数経路を並列表示・優劣なし） ===== */
+  .pathrows{
+    margin:28px 0 40px;
+    border:1px solid var(--border); border-radius:12px;
+    background:var(--bg-card); padding:22px 22px 18px;
+  }
+  .pathrows-title{
+    font-family:var(--font-display); font-size:11px; color:var(--text-dim);
+    letter-spacing:.06em; text-transform:uppercase; margin-bottom:18px;
+  }
+  .path-row{
+    display:flex; align-items:center; gap:14px;
+    padding:14px 0; border-top:1px solid var(--border);
+    opacity:0; transform:translateX(-6px);
+    transition:opacity .5s ease, transform .5s ease;
+  }
+  .path-row.in{opacity:1; transform:translateX(0);}
+  .path-row:first-child{border-top:none; padding-top:0;}
+  .path-chip{
+    flex:1; display:flex; align-items:center; gap:8px;
+    font-family:var(--font-display); font-size:14px; font-weight:500;
+    padding:10px 14px; border-radius:8px;
+    background:var(--bg); border:1px solid var(--border);
+  }
+  .path-arrow{color:var(--text-dim); flex-shrink:0; font-size:16px;}
+  .path-chip.result{
+    border-color:var(--accent); color:var(--accent); font-weight:600;
+  }
+
+  /* ===== Category Cards（対等な分類を並列表示・優劣なし） ===== */
+  .catcards{
+    display:grid; grid-template-columns:repeat(auto-fit, minmax(180px, 1fr)); gap:14px;
+    margin:28px 0 40px;
+  }
+  @media(max-width:520px){ .catcards{grid-template-columns:1fr;} }
+  .catcard{
+    border:1px solid var(--border); border-radius:12px;
+    background:var(--bg-card); padding:20px 18px;
+    opacity:0; transform:translateY(8px);
+    transition:opacity .5s ease, transform .5s ease;
+  }
+  .catcard.in{opacity:1; transform:translateY(0);}
+  .catcard-label{
+    font-family:var(--font-display); font-weight:600; font-size:15px;
+    margin-bottom:8px;
+  }
+  .catcard-desc{
+    font-size:13px; color:var(--text-dim); line-height:1.6;
+  }
+  .catcard-tag{
+    display:inline-block; font-family:var(--font-display); font-size:11px;
+    color:var(--accent); background:var(--accent-dim);
+    padding:3px 9px; border-radius:5px; margin-bottom:10px;
+  }
+
+  /* ===== Flow Steps（手順表示・数値なし） ===== */
+  .flowsteps{
+    margin:28px 0 40px;
+    border:1px solid var(--border); border-radius:12px;
+    background:var(--bg-card); padding:26px 22px 22px;
+  }
+  .flowsteps-title{
+    font-family:var(--font-display); font-weight:600; font-size:15px;
+    color:var(--text); margin-bottom:24px;
+    display:flex; align-items:center; gap:8px;
+  }
+  .flowsteps-title::before{
+    content:""; width:3px; height:15px; background:var(--accent);
+    border-radius:2px; display:inline-block;
+  }
+  .flow-track{
+    display:flex; align-items:stretch; gap:0;
+    overflow-x:auto;
+  }
+  .flow-step{
+    flex:1; min-width:96px;
+    display:flex; flex-direction:column; align-items:center;
+    text-align:center; padding:0 6px; opacity:0; transform:translateY(8px);
+    transition:opacity .5s ease, transform .5s ease;
+  }
+  .flow-step.in{opacity:1; transform:translateY(0);}
+  .flow-num{
+    width:30px; height:30px; border-radius:50%;
+    display:flex; align-items:center; justify-content:center;
+    font-family:var(--font-mono); font-size:13px; font-weight:600;
+    background:var(--accent-dim); color:var(--accent);
+    margin-bottom:10px;
+  }
+  .flow-step.warn .flow-num{background:var(--ask-dim); color:var(--ask);}
+  .flow-label{
+    font-family:var(--font-display); font-weight:600; font-size:14px;
+    margin-bottom:4px;
+  }
+  .flow-desc{
+    font-size:12px; color:var(--text-dim); line-height:1.5;
+  }
+  .flow-arrow{
+    display:flex; align-items:center; justify-content:center;
+    color:var(--border); font-size:16px; flex:0 0 auto; width:18px;
+    padding-top:15px;
+  }
+  @media(max-width:640px){
+    .flow-track{flex-direction:column;}
+    .flow-arrow{transform:rotate(90deg); padding:6px 0; align-self:center;}
+    .flow-step{min-width:0;}
+  }
+
+  .official-box{
+    margin:32px 0 60px;
+    border:1px dashed var(--border); border-radius:10px;
+    padding:18px 20px; display:flex; align-items:center; justify-content:space-between;
+    font-size:13px; color:var(--text-dim); gap:16px; flex-wrap:wrap;
+  }
+  .official-box a{
+    font-family:var(--font-display); font-size:12px; color:var(--amber);
+    border:1px solid var(--amber); padding:7px 14px; border-radius:6px;
+    white-space:nowrap;
+  }
+
+  /* ===== Next Link（ページ下部の「次へ」導線） ===== */
+  .next-link{
+    display:flex; align-items:center; justify-content:space-between;
+    margin:32px 0 60px; padding:18px 22px;
+    border:1px solid var(--border); border-radius:10px;
+    background:var(--bg-card); cursor:pointer;
+    transition:border-color .15s ease, background .15s ease;
+  }
+  .next-link:hover{border-color:var(--accent); background:var(--bg-card-hover);}
+  .next-link.disabled{cursor:default; opacity:.5;}
+  .next-link.disabled:hover{border-color:var(--border); background:var(--bg-card);}
+  .next-link-eyebrow{
+    font-family:var(--font-display); font-size:11px; color:var(--text-dim);
+    margin-bottom:4px;
+  }
+  .next-link-title{
+    font-family:var(--font-display); font-weight:600; font-size:17px;
+    color:var(--text);
+  }
+  .next-link-arrow{font-size:20px; color:var(--accent); flex-shrink:0;}
+  .next-link.disabled .next-link-arrow{color:var(--text-dim);}
+
+  /* ===== Related Themes（関連テーマ） ===== */
+  .related-themes{margin:32px 0;}
+  .related-themes-label{
+    font-family:var(--font-display); font-size:12px; color:var(--text-dim);
+    margin-bottom:10px;
+  }
+  .related-theme-chips{display:flex; gap:10px; flex-wrap:wrap;}
+  .related-theme-chip{
+    font-family:var(--font-display); font-size:13px;
+    padding:8px 16px; border-radius:20px;
+    border:1px solid var(--border); background:var(--bg-card);
+    cursor:pointer; color:var(--text);
+    transition:border-color .15s ease, background .15s ease;
+  }
+  .related-theme-chip:hover{border-color:var(--accent); background:var(--bg-card-hover);}
+  .related-theme-chip.disabled{cursor:default; opacity:.5;}
+  .related-theme-chip.disabled:hover{border-color:var(--border); background:var(--bg-card);}
+
+  /* 概念上の重要な注記（動く数値ではなく、設計思想の強調用） */
+  .callout{
+    margin:28px 0; padding:16px 18px;
+    border-left:3px solid var(--accent); border-radius:0 8px 8px 0;
+    background:var(--accent-dim);
+    font-size:14px; line-height:1.6;
+  }
+  .callout strong{color:var(--accent);}
+
+  /* ===== FAQ Card ===== */
+  .faq-group-label{
+    font-family:var(--font-display); font-weight:600; font-size:13px;
+    color:var(--accent); margin:36px 0 14px;
+    letter-spacing:.02em;
+  }
+  .faq-group-label:first-of-type{margin-top:8px;}
+  .faq-card{
+    border:1px solid var(--border); border-radius:10px;
+    background:var(--bg-card); padding:18px 20px;
+    margin-bottom:12px;
+  }
+  .faq-q{
+    display:flex; align-items:flex-start; gap:10px;
+    font-family:var(--font-display); font-weight:600; font-size:15px;
+    margin-bottom:10px;
+  }
+  .faq-q-mark{
+    color:var(--accent); flex-shrink:0; font-family:var(--font-mono);
+  }
+  .faq-a{
+    font-size:14px; color:var(--text-dim); line-height:1.7;
+    padding-left:20px;
+  }
+  .faq-a a{color:var(--accent); text-decoration:underline; text-underline-offset:2px;}
+
+  /* ===== SIP Library ===== */
+  .sip-card{
+    border:1px solid var(--border); border-radius:10px;
+    background:var(--bg-card); padding:20px 22px;
+    margin-bottom:14px;
+  }
+  .sip-card.child{
+    margin-left:28px; border-left:2px solid var(--border);
+  }
+  .sip-head{
+    display:flex; align-items:center; gap:10px; margin-bottom:8px; flex-wrap:wrap;
+  }
+  .sip-number{
+    font-family:var(--font-mono); font-size:12px; color:var(--amber);
+  }
+  .sip-title{
+    font-family:var(--font-display); font-weight:600; font-size:15px;
+  }
+  .sip-status{
+    font-family:var(--font-display); font-size:10px; letter-spacing:.03em;
+    padding:2px 8px; border-radius:10px; margin-left:auto;
+  }
+  .sip-status.implemented{background:var(--bid-dim); color:var(--bid);}
+  .sip-status.wip{background:var(--amber); color:var(--bg); opacity:.85;}
+  .sip-status.draft{background:var(--bg); color:var(--text-dim); border:1px solid var(--border);}
+  .sip-desc{
+    font-size:13.5px; color:var(--text-dim); line-height:1.7;
+  }
+  .sip-see-also{
+    font-family:var(--font-display); font-size:12px; color:var(--accent);
+    margin-top:8px; cursor:pointer; display:inline-block;
+  }
+
+  /* ===== Official Resources ===== */
+  .resource-card{
+    display:flex; align-items:center; justify-content:space-between; gap:16px;
+    border:1px solid var(--border); border-radius:10px;
+    background:var(--bg-card); padding:18px 20px;
+    margin-bottom:12px; text-decoration:none; color:inherit;
+    transition:border-color .15s ease, background .15s ease;
+  }
+  .resource-card:hover{border-color:var(--accent); background:var(--bg-card-hover);}
+  .resource-title{
+    font-family:var(--font-display); font-weight:600; font-size:15px;
+    margin-bottom:4px;
+  }
+  .resource-desc{font-size:13px; color:var(--text-dim);}
+  .resource-arrow{font-size:18px; color:var(--accent); flex-shrink:0;}
+
+  /* ===== Glossary ===== */
+  .glossary-item{
+    border-bottom:1px solid var(--border);
+    padding:18px 0;
+    scroll-margin-top:90px; /* 「詳しく見る」で飛んだ際、ヘッダーに隠れないようにする */
+  }
+  .glossary-item:first-child{padding-top:0;}
+  .glossary-term{
+    font-family:var(--font-display); font-weight:600; font-size:16px;
+    margin-bottom:6px;
+  }
+  .glossary-desc{
+    font-size:14px; color:var(--text-dim); line-height:1.7;
+  }
+  .glossary-item.highlight{
+    background:var(--accent-dim); border-radius:8px;
+    padding:18px 14px; margin:0 -14px;
+    animation:glossary-fade 2.5s ease forwards;
+  }
+  @keyframes glossary-fade{
+    0%{background:var(--accent-dim);}
+    80%{background:var(--accent-dim);}
+    100%{background:transparent;}
+  }
+
+  /* ===== Popup ===== */
+  .popup-overlay{
+    position:fixed; inset:0; background:rgba(0,0,0,.5);
+    display:none; align-items:center; justify-content:center; z-index:100;
+    cursor:pointer;
+  }
+  .popup-overlay.show{display:flex;}
+  .popup{
+    background:var(--bg-card); border:1px solid var(--border);
+    border-radius:12px; padding:22px 24px; max-width:340px; width:90%;
+    cursor:default; /* overlay側のpointerが継承されるのを打ち消す */
+    position:relative;
+  }
+  .popup-close{
+    position:absolute; top:12px; right:12px;
+    width:26px; height:26px; border-radius:50%;
+    background:transparent; border:none; color:var(--text-dim);
+    font-size:18px; line-height:1; cursor:pointer;
+    display:flex; align-items:center; justify-content:center;
+  }
+  .popup-close:hover{background:var(--bg-card-hover); color:var(--text);}
+  .popup-term{font-family:var(--font-display); color:var(--amber); font-size:13px; margin-bottom:8px; padding-right:20px;}
+  .popup-desc{font-size:14px; margin-bottom:16px;}
+  .popup-more{font-family:var(--font-display); font-size:12px; color:var(--bid); cursor:pointer;}
+
+  footer{
+    max-width:1080px; margin:0 auto; padding:40px 20px 60px;
+    border-top:1px solid var(--border);
+    color:var(--text-dim); font-size:12px; font-family:var(--font-display);
+    display:flex; justify-content:space-between; flex-wrap:wrap; gap:8px;
+  }
+
+  /* ===== Back button ===== */
+  .back-btn{
+    display:inline-flex; align-items:center; gap:6px;
+    font-family:var(--font-display); font-size:13px; color:var(--text-dim);
+    cursor:pointer; padding:4px 0;
+    transition:color .15s ease;
+  }
+  .back-btn:hover{color:var(--text);}
+  .back-btn .arrow{
+    display:inline-block; transition:transform .15s ease;
+  }
+  .back-btn:hover .arrow{transform:translateX(-3px);}
+
+  /* ===== Guide layout (sidebar + main) ===== */
+  .guide-layout{
+    max-width:1080px; margin:0 auto; padding:0 20px 60px;
+    display:flex; gap:40px; align-items:flex-start;
+  }
+  .sidebar{
+    position:sticky; top:70px;
+    width:200px; flex-shrink:0;
+    max-height:calc(100vh - 90px);
+    overflow-y:auto;
+    box-sizing:border-box;
+    padding-right:12px; /* スクロールバー分の余白。文字とバーが重ならないようにする */
+    /* Firefox: 細いスクロールバー＋テーマ連動の色 */
+    scrollbar-width:thin;
+    scrollbar-color:var(--border) transparent;
+  }
+  /* Chrome/Edge/Safari: 細いスクロールバー＋テーマ連動の色 */
+  .sidebar::-webkit-scrollbar{width:6px;}
+  .sidebar::-webkit-scrollbar-track{background:transparent;}
+  .sidebar::-webkit-scrollbar-thumb{
+    background:var(--border); border-radius:3px;
+  }
+  .sidebar::-webkit-scrollbar-thumb:hover{background:var(--text-dim);}
+  .sidebar-mode{
+    font-family:var(--font-display); font-size:11px; letter-spacing:.06em;
+    text-transform:uppercase; color:var(--accent); margin-bottom:14px;
+    display:flex; align-items:center; gap:6px;
+  }
+  .sidebar-mode .tick{width:6px;height:6px;border-radius:50%;background:var(--accent);}
+  .sidebar-list{list-style:none;}
+  .sidebar-item{
+    display:block; padding:9px 12px; margin-bottom:3px;
+    border-radius:7px; font-size:14px; color:var(--text-dim);
+    cursor:pointer; border-left:2px solid transparent;
+    transition:background .15s ease, color .15s ease;
+  }
+  .sidebar-num{
+    font-family:var(--font-mono); font-size:11px; opacity:.6;
+    margin-right:6px;
+  }
+  .sidebar-item:hover{background:var(--bg-card); color:var(--text);}
+  .sidebar-item.active{
+    background:var(--accent-dim); color:var(--accent);
+    border-left:2px solid var(--accent); font-weight:500;
+  }
+  .sidebar-item.disabled{
+    cursor:default; opacity:.4;
+  }
+  .sidebar-item.disabled:hover{background:transparent; color:var(--text-dim);}
+  .sidebar-item .soon{
+    font-family:var(--font-display); font-size:9px; margin-left:6px;
+    opacity:.8;
+  }
+
+  /* Home導線：6テーマとは別枠で、サイドバー最上部に配置 */
+  .sidebar-home{
+    display:flex; align-items:center; gap:6px;
+    padding:8px 12px; margin-bottom:14px;
+    font-size:13px; color:var(--text-dim);
+    border-radius:7px; cursor:pointer;
+    border:1px solid var(--border);
+  }
+  .sidebar-home:hover{background:var(--bg-card-hover); color:var(--text);}
+
+  /* 調べる/深く知る：控えめな補助リンク群（6テーマより目立たせない） */
+  .sidebar-utility{
+    margin-top:22px; padding-top:14px; border-top:1px solid var(--border);
+  }
+  .sidebar-utility-label{
+    font-size:10px; color:var(--text-dim); opacity:.7;
+    margin-bottom:8px; padding:0 12px;
+  }
+  .sidebar-utility-item{
+    display:block; padding:6px 12px; margin-bottom:1px;
+    border-radius:6px; font-size:12.5px; color:var(--text-dim); opacity:.75;
+    cursor:pointer;
+    transition:background .15s ease, opacity .15s ease;
+  }
+  .sidebar-utility-item:hover{background:var(--bg-card-hover); opacity:1;}
+
+  .guide-main{flex:1; min-width:0;}
+  .guide-main .page-header,
+  .guide-main .toggle-row,
+  .guide-main .content{max-width:none; padding-left:0; padding-right:0;}
+  .guide-main .crumb{padding-left:0; padding-right:0;}
+
+  .sidebar-toggle{
+    display:none;
+  }
+  @media(max-width:860px){
+    .guide-layout{flex-direction:column; gap:0;}
+    .sidebar{
+      position:fixed; top:0; left:0; height:100vh; width:240px;
+      background:var(--bg-card); border-right:1px solid var(--border);
+      padding:80px 16px 20px; z-index:80;
+      transform:translateX(-100%);
+      transition:transform .2s ease;
+      max-height:none;
+    }
+    .sidebar.open{transform:translateX(0);}
+    .sidebar-toggle{
+      display:flex; align-items:center; gap:6px;
+      font-family:var(--font-display); font-size:12px; color:var(--text-dim);
+      cursor:pointer; margin-bottom:16px;
+    }
+    .sidebar-scrim{
+      display:none; position:fixed; inset:0; background:rgba(0,0,0,.5); z-index:70;
+      cursor:pointer;
+    }
+    .sidebar-scrim.show{display:block;}
+
+    /* モバイル限定：画面右下に固定表示するフローティングメニューボタン。
+       本文を読み進めてもサイドバーへすぐアクセスできるようにする。 */
+    .fab-menu{
+      display:flex; align-items:center; justify-content:center;
+      position:fixed; right:18px; bottom:18px; z-index:60;
+      width:52px; height:52px; border-radius:50%;
+      background:var(--accent); color:var(--bg);
+      border:none; box-shadow:0 4px 14px rgba(0,0,0,.35);
+      font-size:20px; cursor:pointer;
+    }
+    /* サイドバーが開いている間は、開閉ボタンとの重複を避けるためJS側でclassを制御する */
+    .fab-menu.hide-while-open{display:none;}
+
+    /* ハンバーガーメニューの真上に「戻る」ボタンを配置。
+       Glossaryなど長いページの途中から、上部の戻るリンクまでスクロールせずに戻れるようにする。 */
+    .fab-back{
+      display:flex; align-items:center; justify-content:center;
+      position:fixed; right:18px; bottom:80px; z-index:60;
+      width:44px; height:44px; border-radius:50%;
+      background:var(--bg-card); color:var(--text);
+      border:1px solid var(--border); box-shadow:0 4px 14px rgba(0,0,0,.35);
+      font-size:18px; cursor:pointer;
+    }
+    .fab-back.hide-while-open{display:none;}
+  }
+  @media(min-width:861px){
+    .fab-menu{display:none;} /* デスクトップではサイドバーが常時表示なので不要 */
+    .fab-back{display:none;}
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="header-inner">
+    <a class="logo" href="#" onclick="goHome();return false;"><span class="dot"></span>StandX<span class="logo-suffix"> Guide</span></a>
+    <div class="search-bar">🔍<span>&nbsp;用語・機能を検索</span></div>
+    <div class="header-actions">
+      <div class="header-mode-toggle" id="header-mode-toggle">
+        <div class="header-mode-btn active beginner" id="header-mode-beginner" onclick="switchMode('beginner')">Beginner</div>
+        <div class="header-mode-btn standard" id="header-mode-standard" onclick="switchMode('standard')">Standard</div>
+      </div>
+      <select class="lang-select">
+        <option>日本語</option>
+        <option>English</option>
+        <option>简体中文</option>
+        <option>한국어</option>
+        <option>Tiếng Việt</option>
+        <option>Türkçe</option>
+      </select>
+      <div class="icon-btn" onclick="toggleTheme()">☾</div>
+    </div>
+  </div>
+</header>
+
+<!-- ============ HOME ============ -->
+<div class="page active" id="page-home">
+  <div class="guide-layout" style="margin-top:20px;">
+    <aside class="sidebar" data-theme="" data-mode="beginner"></aside>
+
+    <div class="guide-main">
+      <div class="sidebar-toggle mobile-menu-btn" onclick="openSidebar()">☰ メニュー</div>
+
+      <div class="hero" style="max-width:none; padding:0 0 40px;">
+        <div class="hero-eyebrow">StandX Guide</div>
+        <h1 class="hero-title">StandXの仕組みを、<br>迷わず理解する。</h1>
+        <p class="hero-desc">Perps DEXであるStandXを、DUSD・Trading・Yield・Maker・Vault・Universal Marketsという6つのテーマから読み解くガイドです。</p>
+      </div>
+
+      <div class="entries" style="max-width:none; padding:0 0 56px;">
+        <div class="entry-card beginner" onclick="goPage('dusd-beginner')">
+          <div class="entry-tag"><span class="tick"></span>BEGINNER · 理解する</div>
+          <div class="entry-title">初心者ガイド</div>
+          <div class="entry-sub">StandXを初めて知る方へ。基本から理解できます。<br><span style="color:var(--bid);">→ まずはDUSDから読み進めます</span></div>
+          <div class="entry-themes">
+            <span class="theme-chip">DUSD</span>
+            <span class="theme-chip">Trading</span>
+            <span class="theme-chip">Yield</span>
+            <span class="theme-chip">Maker</span>
+            <span class="theme-chip">Vault</span>
+            <span class="theme-chip">Universal Markets</span>
+          </div>
+        </div>
+        <div class="entry-card standard" onclick="goPage('dusd-standard')">
+          <div class="entry-tag"><span class="tick"></span>STANDARD · 構造を読む</div>
+          <div class="entry-title">スタンダードガイド</div>
+          <div class="entry-sub">仕組みをもう一段詳しく理解したい方へ。</div>
+          <div class="entry-themes">
+            <span class="theme-chip">DUSD</span>
+            <span class="theme-chip">Trading</span>
+            <span class="theme-chip">Yield</span>
+            <span class="theme-chip">Maker</span>
+            <span class="theme-chip">Vault</span>
+            <span class="theme-chip">Universal Markets</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="section-label" style="max-width:none; padding:0 0 14px;">調べる / 深く知る</div>
+      <div class="util-row" style="max-width:none; padding:0 0 40px;">
+        <div class="util-card" onclick="goPage('faq')"><span class="util-icon">FAQ</span>困ったときの入口</div>
+        <div class="util-card" onclick="goPage('glossary')"><span class="util-icon">GLOSSARY</span>用語を確認する</div>
+        <div class="util-card" onclick="goPage('sip-library')"><span class="util-icon">SIP</span>設計の背景を辿る</div>
+        <div class="util-card" onclick="goPage('official-resources')"><span class="util-icon">OFFICIAL</span>公式資料を見る</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ DUSD BEGINNER ============ -->
+<div class="page" id="page-dusd-beginner">
+  <div class="crumb" style="max-width:1080px;margin:0 auto;padding:18px 20px 0;">
+    <span class="back-btn" onclick="goBack();"><span class="arrow">←</span> 戻る</span>
+    <span class="sep">|</span>
+    <a href="#" onclick="goHome();return false;">Beginner</a><span class="sep">/</span><span class="current">DUSD</span>
+  </div>
+
+  <div class="guide-layout" style="margin-top:20px;">
+    <aside class="sidebar" data-theme="dusd" data-mode="beginner"></aside>
+
+    <div class="guide-main">
+      <div class="sidebar-toggle mobile-menu-btn" onclick="openSidebar()">☰ メニュー</div>
+
+      <div class="page-header" style="padding-top:0;">
+        <div class="page-badge" data-theme="dusd" data-mode="beginner"></div>
+        <h1 class="page-title">DUSD</h1>
+        <p class="page-lead">DUSDとは何か。なぜStandXで使われるのか。まずはこの2つを理解します。</p>
+      </div>
+
+      <div class="content" style="padding-top:32px;">
+        <h2>DUSDとは？</h2>
+        <p>DUSDは、StandXが発行する<span class="term" onclick="showPopup('yield-bearing')">Yield-bearing Stablecoin</span>です。保有しているだけで<span class="term" onclick="showPopup('yield')">Yield</span>が発生し、ステーキングは必要ありません。</p>
+
+        <h2>何に使う？</h2>
+        <p>DUSDはStandXでTradeするための<span class="term" onclick="showPopup('margin')">Margin</span>として使われます。Trade中のMarginにもYieldが関係するのが、StandX独自の特徴です。</p>
+
+        <div class="hubgraph">
+          <div class="hubgraph-title">DUSDがつながる先</div>
+          <svg class="hub-svg" viewBox="0 0 560 300" id="dusd-hub-svg">
+            <line class="hub-line" data-idx="0" x1="280" y1="150" x2="280" y2="55"></line>
+            <line class="hub-line" data-idx="1" x1="280" y1="150" x2="120" y2="235"></line>
+            <line class="hub-line" data-idx="2" x1="280" y1="150" x2="440" y2="235"></line>
+
+            <g class="hub-node" data-idx="3">
+              <circle class="hub-node-circle center" cx="280" cy="150" r="34"></circle>
+              <text class="hub-label center" x="280" y="155" text-anchor="middle">DUSD</text>
+            </g>
+
+            <g class="hub-node" data-idx="0">
+              <circle class="hub-node-circle" cx="280" cy="55" r="26"></circle>
+              <text class="hub-label" x="280" y="20" text-anchor="middle">Margin / Perps</text>
+            </g>
+
+            <g class="hub-node" data-idx="1">
+              <circle class="hub-node-circle" cx="120" cy="235" r="26"></circle>
+              <text class="hub-label" x="120" y="278" text-anchor="middle">Yield</text>
+            </g>
+
+            <g class="hub-node" data-idx="2">
+              <circle class="hub-node-circle" cx="440" cy="235" r="26"></circle>
+              <text class="hub-label" x="440" y="278" text-anchor="middle">Universal Markets</text>
+            </g>
+          </svg>
+          <div class="flow-note">DUSDを中心に、Margin/Perps・Yield・Universal Marketsがそれぞれつながっています（優劣・強弱を表す図ではありません）</div>
+        </div>
+
+        <h2>DUSDをどう用意する？</h2>
+        <p>USDT / USDCを<span class="term" onclick="showPopup('mint')">Mint</span>することでDUSDが手に入ります。</p>
+
+        <div class="official-box">
+          <span>DUSDの最新のYield条件・Mint手順は変更される可能性があります。</span>
+          <a href="#">公式Docsで確認 ↗</a>
+        </div>
+
+        <div class="related-themes-slot"></div>
+
+        <div class="next-link-slot"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ DUSD STANDARD ============ -->
+<div class="page" id="page-dusd-standard">
+  <div class="crumb" style="max-width:1080px;margin:0 auto;padding:18px 20px 0;">
+    <span class="back-btn" onclick="goBack();"><span class="arrow">←</span> 戻る</span>
+    <span class="sep">|</span>
+    <a href="#" onclick="goHome();return false;">Standard</a><span class="sep">/</span><span class="current">DUSD</span>
+  </div>
+
+  <div class="guide-layout" style="margin-top:20px;">
+    <aside class="sidebar" data-theme="dusd" data-mode="standard"></aside>
+
+    <div class="guide-main">
+      <div class="sidebar-toggle mobile-menu-btn" onclick="openSidebar()">☰ メニュー</div>
+
+      <div class="page-header" style="padding-top:0;">
+        <div class="page-badge" data-theme="dusd" data-mode="standard"></div>
+        <h1 class="page-title">DUSD</h1>
+        <p class="page-lead">DUSDのYieldはどこから生まれ、Perpsでの取引活動とどうつながっているのかを理解します。</p>
+      </div>
+
+      <div class="content" style="padding-top:32px;">
+        <h2>DUSDの基本</h2>
+        <p>DUSDは、StandXが発行する<span class="term" onclick="showPopup('yield-bearing')">Yield-bearing Stablecoin</span>です。ステーキングなどの追加操作なしに、保有しているだけでYieldが発生します。</p>
+
+        <h2>Yieldの2つの基礎的な源泉</h2>
+        <p>DUSDのYieldは、大きく分けて2つの源泉から生まれます。</p>
+
+        <div class="catcards">
+          <div class="catcard">
+            <div class="catcard-tag">Spot Asset</div>
+            <div class="catcard-label">Staking Yield</div>
+            <div class="catcard-desc">ETH・SOLなどの原資産を、それぞれのネットワークでステーキングして得る利回りです。</div>
+          </div>
+          <div class="catcard">
+            <div class="catcard-tag">Short Position</div>
+            <div class="catcard-label">Funding Fee</div>
+            <div class="catcard-desc"><span class="term" onclick="showPopup('delta-neutral')">デルタニュートラル</span>を保つために保有するShort Perpetualの<span class="term" onclick="showPopup('funding')">Funding</span>から得る収益です。</div>
+          </div>
+        </div>
+
+        <h2>Perpsの取引活動ともつながっている</h2>
+        <p>StandXの機能拡張により、Perpsの<span class="term" onclick="showPopup('fee-routing')">純手数料収益の一部もDUSD Yieldプールへ還流</span>するようになりました。つまりDUSDのYieldは、StandXの基礎運用だけでなく、Perpsでの取引活動そのものからも生まれます。</p>
+
+        <div class="flowsteps">
+          <div class="flowsteps-title">DUSDを中心とした循環</div>
+          <div class="flow-track">
+            <div class="flow-step">
+              <div class="flow-num">1</div>
+              <div class="flow-label">DUSD保有拡大</div>
+              <div class="flow-desc">証拠金の基盤が大きくなる</div>
+            </div>
+            <div class="flow-arrow">→</div>
+            <div class="flow-step">
+              <div class="flow-num">2</div>
+              <div class="flow-label">OI / 出来高拡大</div>
+              <div class="flow-desc">Perpsでの取引が活発になる</div>
+            </div>
+            <div class="flow-arrow">→</div>
+            <div class="flow-step">
+              <div class="flow-num">3</div>
+              <div class="flow-label">手数料収益の増加</div>
+              <div class="flow-desc">SIP-3でDUSD Yieldへ還流</div>
+            </div>
+            <div class="flow-arrow">→</div>
+            <div class="flow-step">
+              <div class="flow-num">4</div>
+              <div class="flow-label">DUSD Yieldの向上</div>
+              <div class="flow-desc">1に戻り、循環が続く</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="official-box">
+          <span>現在のYield料率・還流条件は変更される可能性があります。</span>
+          <a href="#">公式Docsで確認 ↗</a>
+        </div>
+
+        <div class="related-themes-slot"></div>
+
+        <div class="next-link-slot"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ TRADING STANDARD ============ -->
+<div class="page" id="page-trading-standard">
+  <div class="crumb" style="max-width:1080px;margin:0 auto;padding:18px 20px 0;">
+    <span class="back-btn" onclick="goBack();"><span class="arrow">←</span> 戻る</span>
+    <span class="sep">|</span>
+    <a href="#" onclick="goHome();return false;">Standard</a><span class="sep">/</span><span class="current">Trading</span>
+  </div>
+
+  <div class="guide-layout" style="margin-top:20px;">
+    <aside class="sidebar" data-theme="trading" data-mode="standard"></aside>
+
+    <div class="guide-main">
+      <div class="sidebar-toggle mobile-menu-btn" onclick="openSidebar()">☰ メニュー</div>
+
+      <div class="page-header" style="padding-top:0;">
+        <div class="page-badge" data-theme="trading" data-mode="standard"></div>
+        <h1 class="page-title">Trading</h1>
+        <p class="page-lead">Mark Priceが、Funding・Liquidation・ADLとどうつながっているか。清算がどのような段階を踏むのかを理解します。</p>
+      </div>
+
+      <div class="content" style="padding-top:32px;">
+        <h2>Order・Position・Marginの基本</h2>
+        <p>StandXでのTradeは<span class="term" onclick="showPopup('order')">Order</span>から<span class="term" onclick="showPopup('position')">Position</span>が生まれ、<span class="term" onclick="showPopup('margin')">Margin</span>によって維持される、という基本構造はBeginnerと同じです。Standardでは、そのMarginの水準を判定する基準である<span class="term" onclick="showPopup('mark-price')">Mark Price</span>を中心に見ていきます。</p>
+
+        <h2>Mark Priceが基準になる理由</h2>
+        <p>Mark Priceは、単純な直近約定価格（Last Price）だけでなく、複数の参照値を組み合わせて算出されます。これにより、一時的な価格の歪みによる不必要な清算を防ぎます。</p>
+
+        <div class="hubgraph">
+          <div class="hubgraph-title">Mark Priceが関係する先</div>
+          <svg class="hub-svg" viewBox="0 0 560 300">
+            <line class="hub-line" data-idx="0" x1="280" y1="150" x2="280" y2="55"></line>
+            <line class="hub-line" data-idx="1" x1="280" y1="150" x2="120" y2="235"></line>
+            <line class="hub-line" data-idx="2" x1="280" y1="150" x2="440" y2="235"></line>
+
+            <g class="hub-node" data-idx="3">
+              <circle class="hub-node-circle center" cx="280" cy="150" r="34"></circle>
+              <text class="hub-label center" x="280" y="155" text-anchor="middle">Mark Price</text>
+            </g>
+
+            <g class="hub-node" data-idx="0">
+              <circle class="hub-node-circle" cx="280" cy="55" r="26"></circle>
+              <text class="hub-label" x="280" y="20" text-anchor="middle">Funding</text>
+            </g>
+
+            <g class="hub-node" data-idx="1">
+              <circle class="hub-node-circle" cx="120" cy="235" r="26"></circle>
+              <text class="hub-label" x="120" y="278" text-anchor="middle">Liquidation</text>
+            </g>
+
+            <g class="hub-node" data-idx="2">
+              <circle class="hub-node-circle" cx="440" cy="235" r="26"></circle>
+              <text class="hub-label" x="440" y="278" text-anchor="middle">ADL</text>
+            </g>
+          </svg>
+          <div class="flow-note">Mark Priceを中心に、Funding・Liquidation・ADLがそれぞれ参照しています（優劣・強弱を表す図ではありません）</div>
+        </div>
+
+        <h2>Mark Priceが強制清算の引き金になる</h2>
+        <p>Marginの水準は、常にMark Priceを基準に判定されています。この判定でMarginが<span class="term" onclick="showPopup('maintenance-margin')">維持基準</span>を下回ったときに、初めて<span class="term" onclick="showPopup('liquidation')">強制清算（ロスカット）</span>の検討が始まります。ただし、基準を下回った瞬間に即座に決済されるわけではありません。ここから先は、段階を踏んだ防御構造になっています。</p>
+
+        <h2>強制清算はいきなり起きない：段階的な防御</h2>
+        <p>Marginが維持基準を下回っても、すぐに<span class="term" onclick="showPopup('adl')">ADL</span>が発動するわけではありません。ADLは他の健全なポジション保有者を巻き込む形になる、最後の手段だからです。プラットフォーム全体の支払い能力を維持しつつ、ADLの発動をできる限り避けるために、段階を踏んだ防御構造になっています。</p>
+
+        <div class="flowsteps">
+          <div class="flowsteps-title">清算の段階</div>
+          <div class="flow-track">
+            <div class="flow-step">
+              <div class="flow-num">1</div>
+              <div class="flow-label">Order Book</div>
+              <div class="flow-desc">市場価格に近い形で処理を試みる</div>
+            </div>
+            <div class="flow-arrow">→</div>
+            <div class="flow-step">
+              <div class="flow-num">2</div>
+              <div class="flow-label">Vault</div>
+              <div class="flow-desc">処理しきれない分の緩衝材となる</div>
+            </div>
+            <div class="flow-arrow">→</div>
+            <div class="flow-step warn">
+              <div class="flow-num">3</div>
+              <div class="flow-label">ADL</div>
+              <div class="flow-desc">他者を巻き込む最終手段</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="official-box">
+          <span>現在の清算手数料率・維持証拠金率は変更される可能性があります。</span>
+          <a href="#">公式Docsで確認 ↗</a>
+        </div>
+
+        <div class="related-themes-slot"></div>
+
+        <div class="next-link-slot"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ YIELD STANDARD ============ -->
+<div class="page" id="page-yield-standard">
+  <div class="crumb" style="max-width:1080px;margin:0 auto;padding:18px 20px 0;">
+    <span class="back-btn" onclick="goBack();"><span class="arrow">←</span> 戻る</span>
+    <span class="sep">|</span>
+    <a href="#" onclick="goHome();return false;">Standard</a><span class="sep">/</span><span class="current">Yield</span>
+  </div>
+
+  <div class="guide-layout" style="margin-top:20px;">
+    <aside class="sidebar" data-theme="yield" data-mode="standard"></aside>
+
+    <div class="guide-main">
+      <div class="sidebar-toggle mobile-menu-btn" onclick="openSidebar()">☰ メニュー</div>
+
+      <div class="page-header" style="padding-top:0;">
+        <div class="page-badge" data-theme="yield" data-mode="standard"></div>
+        <h1 class="page-title">Yield</h1>
+        <p class="page-lead">3つのYieldは、共通の手数料収益からどう分配されているのか。それぞれの評価軸の違いを理解します。</p>
+      </div>
+
+      <div class="content" style="padding-top:32px;">
+        <h2>Yieldは3つの層でできている</h2>
+        <p>StandXのYieldは、<span class="term" onclick="showPopup('position-yield-layer')">Position Yield</span>・<span class="term" onclick="showPopup('dusd-yield-layer')">DUSD Yield</span>・<span class="term" onclick="showPopup('maker-yield-layer')">Maker Yield</span>という3つの層で構成されています。Beginnerで見た「何をすると、どのYieldにつながるか」に加え、Standardではこれらが共通の<span class="term" onclick="showPopup('trading-fees')">Trading Fees</span>からどう枝分かれしているかを見ていきます。</p>
+
+        <div class="hubgraph">
+          <div class="hubgraph-title">Trading Feesが分配される先</div>
+          <svg class="hub-svg" viewBox="0 0 560 300">
+            <line class="hub-line" data-idx="0" x1="280" y1="150" x2="280" y2="55"></line>
+            <line class="hub-line" data-idx="1" x1="280" y1="150" x2="120" y2="235"></line>
+            <line class="hub-line" data-idx="2" x1="280" y1="150" x2="440" y2="235"></line>
+
+            <g class="hub-node" data-idx="3">
+              <circle class="hub-node-circle center" cx="280" cy="150" r="34"></circle>
+              <text class="hub-label center" x="280" y="155" text-anchor="middle">Trading Fees</text>
+            </g>
+
+            <g class="hub-node" data-idx="0">
+              <circle class="hub-node-circle" cx="280" cy="55" r="26"></circle>
+              <text class="hub-label" x="280" y="20" text-anchor="middle">Position Yield</text>
+            </g>
+
+            <g class="hub-node" data-idx="1">
+              <circle class="hub-node-circle" cx="120" cy="235" r="26"></circle>
+              <text class="hub-label" x="120" y="278" text-anchor="middle">DUSD Yield</text>
+            </g>
+
+            <g class="hub-node" data-idx="2">
+              <circle class="hub-node-circle" cx="440" cy="235" r="26"></circle>
+              <text class="hub-label" x="440" y="278" text-anchor="middle">Maker Yield</text>
+            </g>
+          </svg>
+          <div class="flow-note">Trading Feesを中心に、3つのYieldがそれぞれ分配を受けています（優劣・強弱を表す図ではありません）</div>
+        </div>
+
+        <h2>それぞれ何を評価しているか</h2>
+        <p>同じ「Yield」でも、評価している対象は層ごとに異なります。</p>
+
+        <div class="catcards">
+          <div class="catcard">
+            <div class="catcard-tag">SIP-2</div>
+            <div class="catcard-label">Position Yield</div>
+            <div class="catcard-desc">Positionをどれだけの時間保有し続けたか、という保有時間を評価します。</div>
+          </div>
+          <div class="catcard">
+            <div class="catcard-tag">SIP-3</div>
+            <div class="catcard-label">DUSD Yield</div>
+            <div class="catcard-desc">DUSDをどれだけ保有しているか、という保有量を評価します。</div>
+          </div>
+          <div class="catcard">
+            <div class="catcard-tag">SIP-5A</div>
+            <div class="catcard-label">Maker Yield</div>
+            <div class="catcard-desc">Order Bookにどれだけ厚みのあるLiquidityを提供したか、という貢献量を評価します。</div>
+          </div>
+        </div>
+
+        <div class="official-box">
+          <span>現在のYield配分比率・料率は変更される可能性があります。</span>
+          <a href="#">公式Docsで確認 ↗</a>
+        </div>
+
+        <div class="related-themes-slot"></div>
+
+        <div class="next-link-slot"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ YIELD BEGINNER ============ -->
+<div class="page" id="page-yield-beginner">
+  <div class="crumb" style="max-width:1080px;margin:0 auto;padding:18px 20px 0;">
+    <span class="back-btn" onclick="goBack();"><span class="arrow">←</span> 戻る</span>
+    <span class="sep">|</span>
+    <a href="#" onclick="goHome();return false;">Beginner</a><span class="sep">/</span><span class="current">Yield</span>
+  </div>
+
+  <div class="guide-layout" style="margin-top:20px;">
+    <aside class="sidebar" data-theme="yield" data-mode="beginner"></aside>
+
+    <div class="guide-main">
+      <div class="sidebar-toggle mobile-menu-btn" onclick="openSidebar()">☰ メニュー</div>
+
+      <div class="page-header" style="padding-top:0;">
+        <div class="page-badge" data-theme="yield" data-mode="beginner"></div>
+        <h1 class="page-title">Yield</h1>
+        <p class="page-lead">StandXのYieldは1種類ではありません。何をすると、どのYieldにつながるのかを理解します。</p>
+      </div>
+
+      <div class="content" style="padding-top:32px;">
+        <h2>Yieldは1つではない</h2>
+        <p>StandXでは、<span class="term" onclick="showPopup('dusd-holding')">DUSDを保有する</span>ことと、<span class="term" onclick="showPopup('position-holding')">Positionを保有する</span>ことが、それぞれ別のYieldにつながります。どちらか一方だけを選ぶ必要はなく、同時に発生します。</p>
+
+        <div class="pathrows">
+          <div class="pathrows-title">Yieldにつながる経路</div>
+          <div class="path-row">
+            <div class="path-chip">DUSDを保有する</div>
+            <div class="path-arrow">→</div>
+            <div class="path-chip result">DUSD Yield</div>
+          </div>
+          <div class="path-row">
+            <div class="path-chip">Positionを保有する</div>
+            <div class="path-arrow">→</div>
+            <div class="path-chip result">Position Yield</div>
+          </div>
+          <div class="path-row">
+            <div class="path-chip">Liquidityを提供する</div>
+            <div class="path-arrow">→</div>
+            <div class="path-chip result">Maker Yield</div>
+          </div>
+        </div>
+
+        <h2>特別な操作は必要？</h2>
+        <p>いずれも<span class="term" onclick="showPopup('staking-free')">ステーキングのような追加操作</span>は不要です。DUSDを保有する、あるいはPositionを持つという行動そのものが対象になります。</p>
+
+        <div class="official-box">
+          <span>現在のYield条件・料率・対象範囲は変更される可能性があります。</span>
+          <a href="#">公式Docsで確認 ↗</a>
+        </div>
+
+        <div class="related-themes-slot"></div>
+
+        <div class="next-link-slot"></div>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="page" id="page-trading-beginner">
+  <div class="crumb" style="max-width:1080px;margin:0 auto;padding:18px 20px 0;">
+    <span class="back-btn" onclick="goBack();"><span class="arrow">←</span> 戻る</span>
+    <span class="sep">|</span>
+    <a href="#" onclick="goHome();return false;">Beginner</a><span class="sep">/</span><span class="current">Trading</span>
+  </div>
+
+  <div class="guide-layout" style="margin-top:20px;">
+    <aside class="sidebar" data-theme="trading" data-mode="beginner"></aside>
+
+    <div class="guide-main">
+      <div class="sidebar-toggle mobile-menu-btn" onclick="openSidebar()">☰ メニュー</div>
+
+      <div class="page-header" style="padding-top:0;">
+        <div class="page-badge" data-theme="trading" data-mode="beginner"></div>
+        <h1 class="page-title">Trading</h1>
+        <p class="page-lead">StandXでPerpsをどうTradeするのか。基本の流れを理解します。</p>
+      </div>
+
+      <div class="content" style="padding-top:32px;">
+        <h2>Perpsとは？</h2>
+        <p><span class="term" onclick="showPopup('perps')">Perps（Perpetual Futures）</span>は、満期のない先物取引です。現物を持たずに、価格の上昇（Long）にも下落（Short）にもポジションを取れます。</p>
+
+        <h2>どういう流れでTradeする？</h2>
+        <p>StandXでのTradeは、<span class="term" onclick="showPopup('order')">Order</span>を出すことから始まります。Orderが<span class="term" onclick="showPopup('execution')">Execution</span>されると<span class="term" onclick="showPopup('position')">Position</span>が生まれ、保有中は<span class="term" onclick="showPopup('funding')">Funding</span>や含み損益（PnL）が発生し続けます。</p>
+
+        <div class="flowsteps">
+          <div class="flowsteps-title">Tradeの流れ</div>
+          <div class="flow-track" id="trading-flow-track">
+            <div class="flow-step">
+              <div class="flow-num">1</div>
+              <div class="flow-label">Order</div>
+              <div class="flow-desc">価格・数量を指定して注文</div>
+            </div>
+            <div class="flow-arrow">→</div>
+            <div class="flow-step">
+              <div class="flow-num">2</div>
+              <div class="flow-label">Execution</div>
+              <div class="flow-desc">注文が約定する</div>
+            </div>
+            <div class="flow-arrow">→</div>
+            <div class="flow-step">
+              <div class="flow-num">3</div>
+              <div class="flow-label">Position</div>
+              <div class="flow-desc">保有中はPnL・Fundingが発生</div>
+            </div>
+            <div class="flow-arrow">→</div>
+            <div class="flow-step warn">
+              <div class="flow-num">4</div>
+              <div class="flow-label">Close / Liquidation</div>
+              <div class="flow-desc">自分で決済、または強制清算</div>
+            </div>
+          </div>
+        </div>
+
+        <h2>Positionはどう終わる？</h2>
+        <p>自分の意思で決済する（Close）か、<span class="term" onclick="showPopup('margin')">Margin</span>が<span class="term" onclick="showPopup('maintenance-margin')">維持基準</span>を下回ると強制清算（<span class="term" onclick="showPopup('liquidation')">Liquidation</span>）されます。</p>
+
+        <div class="official-box">
+          <span>現在の手数料率・最大レバレッジ・対応銘柄は変更される可能性があります。</span>
+          <a href="#">公式Docsで確認 ↗</a>
+        </div>
+
+        <div class="related-themes-slot"></div>
+
+        <div class="next-link-slot"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ MAKER BEGINNER ============ -->
+<div class="page" id="page-maker-beginner">
+  <div class="crumb" style="max-width:1080px;margin:0 auto;padding:18px 20px 0;">
+    <span class="back-btn" onclick="goBack();"><span class="arrow">←</span> 戻る</span>
+    <span class="sep">|</span>
+    <a href="#" onclick="goHome();return false;">Beginner</a><span class="sep">/</span><span class="current">Maker</span>
+  </div>
+
+  <div class="guide-layout" style="margin-top:20px;">
+    <aside class="sidebar" data-theme="maker" data-mode="beginner"></aside>
+
+    <div class="guide-main">
+      <div class="sidebar-toggle mobile-menu-btn" onclick="openSidebar()">☰ メニュー</div>
+
+      <div class="page-header" style="padding-top:0;">
+        <div class="page-badge" data-theme="maker" data-mode="beginner"></div>
+        <h1 class="page-title">Maker</h1>
+        <p class="page-lead">Makerとは何か。何をすると、どうReward（報酬）につながるのかを理解します。</p>
+      </div>
+
+      <div class="content" style="padding-top:32px;">
+        <h2>Makerとは？</h2>
+        <p>Makerとは、<span class="term" onclick="showPopup('liquidity')">Liquidity</span>をMarketに提供する人のことです。買い注文と売り注文の両方を出し、<span class="term" onclick="showPopup('order-book')">Order Book</span>に厚みを持たせる役割を担います。</p>
+
+        <h2>どういう流れでRewardにつながる？</h2>
+        <p>Buy/Sell両方の注文を出し続けることで<span class="term" onclick="showPopup('maker-hours')">Maker Hours</span>が積み上がり、その実績に応じてRewardが分配されます。</p>
+
+        <div class="flowsteps">
+          <div class="flowsteps-title">Makerの流れ</div>
+          <div class="flow-track">
+            <div class="flow-step">
+              <div class="flow-num">1</div>
+              <div class="flow-label">Buy + Sell</div>
+              <div class="flow-desc">両側に注文を出す</div>
+            </div>
+            <div class="flow-arrow">→</div>
+            <div class="flow-step">
+              <div class="flow-num">2</div>
+              <div class="flow-label">Order Book</div>
+              <div class="flow-desc">板に厚みが生まれる</div>
+            </div>
+            <div class="flow-arrow">→</div>
+            <div class="flow-step">
+              <div class="flow-num">3</div>
+              <div class="flow-label">Maker Hours</div>
+              <div class="flow-desc">提供した実績が積み上がる</div>
+            </div>
+            <div class="flow-arrow">→</div>
+            <div class="flow-step">
+              <div class="flow-num">4</div>
+              <div class="flow-label">Reward</div>
+              <div class="flow-desc">実績に応じて分配される</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="official-box">
+          <span>現在のReward条件・配分ルールは変更される可能性があります。</span>
+          <a href="#">公式Docsで確認 ↗</a>
+        </div>
+
+        <div class="related-themes-slot"></div>
+
+        <div class="next-link-slot"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ MAKER STANDARD ============ -->
+<div class="page" id="page-maker-standard">
+  <div class="crumb" style="max-width:1080px;margin:0 auto;padding:18px 20px 0;">
+    <span class="back-btn" onclick="goBack();"><span class="arrow">←</span> 戻る</span>
+    <span class="sep">|</span>
+    <a href="#" onclick="goHome();return false;">Standard</a><span class="sep">/</span><span class="current">Maker</span>
+  </div>
+
+  <div class="guide-layout" style="margin-top:20px;">
+    <aside class="sidebar" data-theme="maker" data-mode="standard"></aside>
+
+    <div class="guide-main">
+      <div class="sidebar-toggle mobile-menu-btn" onclick="openSidebar()">☰ メニュー</div>
+
+      <div class="page-header" style="padding-top:0;">
+        <div class="page-badge" data-theme="maker" data-mode="standard"></div>
+        <h1 class="page-title">Maker</h1>
+        <p class="page-lead">Maker Hoursは何によって決まるのか。3つの要因がどう組み合わさっているかを理解します。</p>
+      </div>
+
+      <div class="content" style="padding-top:32px;">
+        <h2>Makerの基本</h2>
+        <p>Makerが<span class="term" onclick="showPopup('order-book')">Order Book</span>にLiquidityを提供し続けると<span class="term" onclick="showPopup('maker-hours')">Maker Hours</span>が積み上がる、という基本構造はBeginnerと同じです。Standardでは、そのMaker Hoursが何によって決まるのかを見ていきます。</p>
+
+        <h2>Maker Hoursを決める3つの要因</h2>
+        <p>Maker Hoursは、単純な取引量ではなく、複数の要因が組み合わさって決まります。</p>
+
+        <div class="catcards">
+          <div class="catcard">
+            <div class="catcard-tag">Size</div>
+            <div class="catcard-label">Order Size</div>
+            <div class="catcard-desc">板に置いている注文の量です。大きいほど、より多くのLiquidityを提供していることになります。</div>
+          </div>
+          <div class="catcard">
+            <div class="catcard-tag">Proximity</div>
+            <div class="catcard-label"><span class="term" onclick="showPopup('proximity')">Mark Priceへの近さ</span></div>
+            <div class="catcard-desc">注文がMark Priceにどれだけ近いかです。近いほど、より高く評価されます。</div>
+          </div>
+          <div class="catcard">
+            <div class="catcard-tag">Uptime</div>
+            <div class="catcard-label">稼働時間</div>
+            <div class="catcard-desc">板に注文を出し続けている時間です。継続して提供し続けることが評価されます。</div>
+          </div>
+        </div>
+
+        <p>この3つを組み合わせることで、<span class="term" onclick="showPopup('capital-efficiency')">少ない資本でも価格に近く発注すれば同じ評価を得られる</span>という設計になっています。</p>
+
+        <h2>Maker Hoursの先にあるもの</h2>
+        <p>積み上げたMaker Hoursに応じて、Rewardの分配に加えて<span class="term" onclick="showPopup('fee-tier')">手数料優遇の段階（Tier）</span>も上がっていきます。</p>
+
+        <div class="official-box">
+          <span>現在のTier条件・Reward配分・上限値は変更される可能性があります。</span>
+          <a href="#">公式Docsで確認 ↗</a>
+        </div>
+
+        <div class="related-themes-slot"></div>
+
+        <div class="next-link-slot"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ VAULT BEGINNER ============ -->
+<div class="page" id="page-vault-beginner">
+  <div class="crumb" style="max-width:1080px;margin:0 auto;padding:18px 20px 0;">
+    <span class="back-btn" onclick="goBack();"><span class="arrow">←</span> 戻る</span>
+    <span class="sep">|</span>
+    <a href="#" onclick="goHome();return false;">Beginner</a><span class="sep">/</span><span class="current">Vault</span>
+  </div>
+
+  <div class="guide-layout" style="margin-top:20px;">
+    <aside class="sidebar" data-theme="vault" data-mode="beginner"></aside>
+
+    <div class="guide-main">
+      <div class="sidebar-toggle mobile-menu-btn" onclick="openSidebar()">☰ メニュー</div>
+
+      <div class="page-header" style="padding-top:0;">
+        <div class="page-badge" data-theme="vault" data-mode="beginner"></div>
+        <h1 class="page-title">Vault</h1>
+        <p class="page-lead">Vaultとは何か。3種類のVaultが、それぞれ何のためにあるのかを理解します。</p>
+      </div>
+
+      <div class="content" style="padding-top:32px;">
+        <h2>Vaultとは？</h2>
+        <p>Vaultとは、特定の目的のために用意された<span class="term" onclick="showPopup('capital-pool')">資金のプール</span>です。StandXには目的の異なる3種類のVaultがあります。</p>
+
+        <div class="catcards" id="vault-catcards">
+          <div class="catcard">
+            <div class="catcard-tag">Trading Capital</div>
+            <div class="catcard-label">Strategy Vault</div>
+            <div class="catcard-desc">取引のための資金として使われるVaultです。</div>
+          </div>
+          <div class="catcard">
+            <div class="catcard-tag">Maker Incentive</div>
+            <div class="catcard-label">Reward Vault</div>
+            <div class="catcard-desc">Makerへの報酬の原資として使われるVaultです。</div>
+          </div>
+          <div class="catcard">
+            <div class="catcard-tag">Insurance Capital</div>
+            <div class="catcard-label">Shield Vault</div>
+            <div class="catcard-desc"><span class="term" onclick="showPopup('liquidation')">Liquidation</span>で生じうる損失を吸収するためのVaultです。</div>
+          </div>
+        </div>
+
+        <h2>3つに分ける理由は？</h2>
+        <p>目的ごとに資金を分けることで、<span class="term" onclick="showPopup('risk-isolation')">それぞれの役割が混ざらない</span>ようになっています。</p>
+
+        <div class="official-box">
+          <span>現在のVault条件・資金規模は変更される可能性があります。</span>
+          <a href="#">公式Docsで確認 ↗</a>
+        </div>
+
+        <div class="related-themes-slot"></div>
+
+        <div class="next-link-slot"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ VAULT STANDARD ============ -->
+<div class="page" id="page-vault-standard">
+  <div class="crumb" style="max-width:1080px;margin:0 auto;padding:18px 20px 0;">
+    <span class="back-btn" onclick="goBack();"><span class="arrow">←</span> 戻る</span>
+    <span class="sep">|</span>
+    <a href="#" onclick="goHome();return false;">Standard</a><span class="sep">/</span><span class="current">Vault</span>
+  </div>
+
+  <div class="guide-layout" style="margin-top:20px;">
+    <aside class="sidebar" data-theme="vault" data-mode="standard"></aside>
+
+    <div class="guide-main">
+      <div class="sidebar-toggle mobile-menu-btn" onclick="openSidebar()">☰ メニュー</div>
+
+      <div class="page-header" style="padding-top:0;">
+        <div class="page-badge" data-theme="vault" data-mode="standard"></div>
+        <h1 class="page-title">Vault</h1>
+        <p class="page-lead">Shield Vaultは清算の仕組みとどうつながっているか。市場が動き出すまでの条件を理解します。</p>
+      </div>
+
+      <div class="content" style="padding-top:32px;">
+        <h2>Vaultの基本</h2>
+        <p>Strategy・Reward・Shieldという3種類のVaultがあり、それぞれ目的が異なる、という基本構造はBeginnerと同じです。Standardでは、このうち<span class="term" onclick="showPopup('shield-vault')">Shield Vault</span>が他の仕組みとどうつながっているかを見ていきます。</p>
+
+        <h2>Shield Vaultは清算の一部でもある</h2>
+        <p>Tradingで見た清算の段階（Order Book→Vault→ADL）の「Vault」は、まさにこのShield Vaultのことです。Order Bookで処理しきれなかった清算を吸収する緩衝材として機能しています。</p>
+
+        <h2>市場が動き出すための条件</h2>
+        <p>新しい市場は、作られただけではすぐに取引可能になりません。<span class="term" onclick="showPopup('trading-gate')">Trading Gate</span>という関門を通過する必要があります。</p>
+
+        <div class="flowsteps">
+          <div class="flowsteps-title">市場が稼働するまで</div>
+          <div class="flow-track">
+            <div class="flow-step">
+              <div class="flow-num">1</div>
+              <div class="flow-label">Sponsor Commitment</div>
+              <div class="flow-desc">Sponsorが最低限の資金を拠出</div>
+            </div>
+            <div class="flow-arrow">→</div>
+            <div class="flow-step">
+              <div class="flow-num">2</div>
+              <div class="flow-label">Shield Vault充足</div>
+              <div class="flow-desc">保険資本の基準を満たす</div>
+            </div>
+            <div class="flow-arrow">→</div>
+            <div class="flow-step">
+              <div class="flow-num">3</div>
+              <div class="flow-label">Trading Gate通過</div>
+              <div class="flow-desc">取引開始の関門をクリア</div>
+            </div>
+            <div class="flow-arrow">→</div>
+            <div class="flow-step">
+              <div class="flow-num">4</div>
+              <div class="flow-label">Live Market</div>
+              <div class="flow-desc">市場が実際に稼働する</div>
+            </div>
+          </div>
+        </div>
+
+        <h2>Reward Vaultは循環する</h2>
+        <p>Reward Vaultは、一度配ったら終わりではありません。市場が育つほど、Vault自身も育つ設計になっています。</p>
+
+        <div class="flowsteps">
+          <div class="flowsteps-title">Reward Vaultの成長循環</div>
+          <div class="flow-track">
+            <div class="flow-step">
+              <div class="flow-num">1</div>
+              <div class="flow-label">Reward Budget</div>
+              <div class="flow-desc">Makerへの原資となる</div>
+            </div>
+            <div class="flow-arrow">→</div>
+            <div class="flow-step">
+              <div class="flow-num">2</div>
+              <div class="flow-label">Liquidity拡大</div>
+              <div class="flow-desc">Order Bookに厚みが増す</div>
+            </div>
+            <div class="flow-arrow">→</div>
+            <div class="flow-step">
+              <div class="flow-num">3</div>
+              <div class="flow-label">Trading拡大</div>
+              <div class="flow-desc">取引が活発になる</div>
+            </div>
+            <div class="flow-arrow">→</div>
+            <div class="flow-step">
+              <div class="flow-num">4</div>
+              <div class="flow-label">Fee収益の増加</div>
+              <div class="flow-desc">1に戻り、循環が続く</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="official-box">
+          <span>現在のSponsor拠出条件・Vault規模は変更される可能性があります。</span>
+          <a href="#">公式Docsで確認 ↗</a>
+        </div>
+
+        <div class="related-themes-slot"></div>
+
+        <div class="next-link-slot"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ UNIVERSAL MARKETS BEGINNER ============ -->
+<div class="page" id="page-universal-markets-beginner">
+  <div class="crumb" style="max-width:1080px;margin:0 auto;padding:18px 20px 0;">
+    <span class="back-btn" onclick="goBack();"><span class="arrow">←</span> 戻る</span>
+    <span class="sep">|</span>
+    <a href="#" onclick="goHome();return false;">Beginner</a><span class="sep">/</span><span class="current">Universal Markets</span>
+  </div>
+
+  <div class="guide-layout" style="margin-top:20px;">
+    <aside class="sidebar" data-theme="universal-markets" data-mode="beginner"></aside>
+
+    <div class="guide-main">
+      <div class="sidebar-toggle mobile-menu-btn" onclick="openSidebar()">☰ メニュー</div>
+
+      <div class="page-header" style="padding-top:0;">
+        <div class="page-badge" data-theme="universal-markets" data-mode="beginner"></div>
+        <h1 class="page-title">Universal Markets</h1>
+        <p class="page-lead">誰でも市場を作れる仕組み。これまで見てきたDUSD・Trading・Yield・Maker・Vaultが、ここでつながります。</p>
+      </div>
+
+      <div class="content" style="padding-top:32px;">
+        <h2>Universal Marketsとは？</h2>
+        <p><span class="term" onclick="showPopup('sponsor')">Sponsor</span>が、公開されたルールに従って市場を作り、育てていくための仕組みです。<span class="term" onclick="showPopup('permissionless')">Permissionless</span>（許可不要）でありながら、ルールに基づいて運営されます。</p>
+
+        <div class="flowsteps">
+          <div class="flowsteps-title">市場ができるまで</div>
+          <div class="flow-track">
+            <div class="flow-step">
+              <div class="flow-num">1</div>
+              <div class="flow-label">Sponsor</div>
+              <div class="flow-desc">市場を作る人が現れる</div>
+            </div>
+            <div class="flow-arrow">→</div>
+            <div class="flow-step">
+              <div class="flow-num">2</div>
+              <div class="flow-label">Market</div>
+              <div class="flow-desc">市場が立ち上がる</div>
+            </div>
+            <div class="flow-arrow">→</div>
+            <div class="flow-step">
+              <div class="flow-num">3</div>
+              <div class="flow-label">Liquidity</div>
+              <div class="flow-desc">Makerが厚みを提供する</div>
+            </div>
+            <div class="flow-arrow">→</div>
+            <div class="flow-step">
+              <div class="flow-num">4</div>
+              <div class="flow-label">Trading</div>
+              <div class="flow-desc">Traderが取引する</div>
+            </div>
+            <div class="flow-arrow">→</div>
+            <div class="flow-step">
+              <div class="flow-num">5</div>
+              <div class="flow-label">Maintenance</div>
+              <div class="flow-desc">市場が維持され続ける</div>
+            </div>
+          </div>
+        </div>
+
+        <h2>市場を支える3つの要素</h2>
+        <p>それぞれの市場には、目的の異なる3つの仕組みが備わっています。</p>
+
+        <div class="catcards" id="um-catcards">
+          <div class="catcard">
+            <div class="catcard-tag">Liquidity Incentive</div>
+            <div class="catcard-label">Reward Vault</div>
+            <div class="catcard-desc">Makerへのインセンティブを提供します。</div>
+          </div>
+          <div class="catcard">
+            <div class="catcard-tag">Price</div>
+            <div class="catcard-label"><span class="term" onclick="showPopup('oracle-grid')">Oracle Grid</span></div>
+            <div class="catcard-desc">市場に応じた価格情報の参照方法です。</div>
+          </div>
+          <div class="catcard">
+            <div class="catcard-tag">Risk</div>
+            <div class="catcard-label">Shield Vault</div>
+            <div class="catcard-desc">その市場固有のリスクを吸収します。</div>
+          </div>
+        </div>
+
+        <div class="callout">
+          <strong>Permissionless ≠ ルールがない。</strong><br>
+          誰でも市場を作れますが、それは「何をしてもよい」という意味ではありません。オラクルや清算などのルールは、あらかじめ公開された形で定められています。
+        </div>
+
+        <div class="official-box">
+          <span>現在のUniversal Markets対応状況・条件は変更される可能性があります。</span>
+          <a href="#">公式Docsで確認 ↗</a>
+        </div>
+
+        <div class="related-themes-slot"></div>
+
+        <div class="next-link-slot"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ UNIVERSAL MARKETS STANDARD ============ -->
+<div class="page" id="page-universal-markets-standard">
+  <div class="crumb" style="max-width:1080px;margin:0 auto;padding:18px 20px 0;">
+    <span class="back-btn" onclick="goBack();"><span class="arrow">←</span> 戻る</span>
+    <span class="sep">|</span>
+    <a href="#" onclick="goHome();return false;">Standard</a><span class="sep">/</span><span class="current">Universal Markets</span>
+  </div>
+
+  <div class="guide-layout" style="margin-top:20px;">
+    <aside class="sidebar" data-theme="universal-markets" data-mode="standard"></aside>
+
+    <div class="guide-main">
+      <div class="sidebar-toggle mobile-menu-btn" onclick="openSidebar()">☰ メニュー</div>
+
+      <div class="page-header" style="padding-top:0;">
+        <div class="page-badge" data-theme="universal-markets" data-mode="standard"></div>
+        <h1 class="page-title">Universal Markets</h1>
+        <p class="page-lead">市場ができるまでの詳しい流れと、Oracle Gridの3つの方式を理解します。これまでの5テーマが、ここで接続します。</p>
+      </div>
+
+      <div class="content" style="padding-top:32px;">
+        <h2>Universal Marketsの基本</h2>
+        <p>Sponsorが市場を作り、Reward Vault・Oracle Grid・Shield Vaultという3つの要素が支える、という基本構造はBeginnerと同じです。Standardでは、市場ができるまでのより詳しい流れを見ていきます。</p>
+
+        <div class="flowsteps">
+          <div class="flowsteps-title">市場ができるまでの詳しい流れ</div>
+          <div class="flow-track">
+            <div class="flow-step">
+              <div class="flow-num">1</div>
+              <div class="flow-label">Sponsor</div>
+              <div class="flow-desc">市場を作る人が現れる</div>
+            </div>
+            <div class="flow-arrow">→</div>
+            <div class="flow-step">
+              <div class="flow-num">2</div>
+              <div class="flow-label">Stake</div>
+              <div class="flow-desc"><span class="term" onclick="showPopup('sponsor')">Sponsor</span>が資産を拠出する</div>
+            </div>
+            <div class="flow-arrow">→</div>
+            <div class="flow-step">
+              <div class="flow-num">3</div>
+              <div class="flow-label">Market Parameters</div>
+              <div class="flow-desc">市場の条件を設定する</div>
+            </div>
+            <div class="flow-arrow">→</div>
+            <div class="flow-step">
+              <div class="flow-num">4</div>
+              <div class="flow-label"><span class="term" onclick="showPopup('oracle-grid')">Oracle Grid</span></div>
+              <div class="flow-desc">価格の参照方法を決める</div>
+            </div>
+            <div class="flow-arrow">→</div>
+            <div class="flow-step">
+              <div class="flow-num">5</div>
+              <div class="flow-label"><span class="term" onclick="showPopup('trading-gate')">Trading Gate</span></div>
+              <div class="flow-desc">Vault充足など関門を通過</div>
+            </div>
+            <div class="flow-arrow">→</div>
+            <div class="flow-step">
+              <div class="flow-num">6</div>
+              <div class="flow-label">Live Market</div>
+              <div class="flow-desc">市場が実際に稼働する</div>
+            </div>
+          </div>
+        </div>
+
+        <h2>Oracle Gridは市場ごとに選べる</h2>
+        <p>価格をどこから参照するかは、すべての市場で一律ではありません。市場の性質に応じて、3つの方式から選ばれます。</p>
+
+        <div class="catcards">
+          <div class="catcard">
+            <div class="catcard-tag">Blind Grid</div>
+            <div class="catcard-label">外部指標なし</div>
+            <div class="catcard-desc">外部の価格情報に頼らず、市場内の取引だけで価格が形成されます。</div>
+          </div>
+          <div class="catcard">
+            <div class="catcard-tag">Linked Grid</div>
+            <div class="catcard-label">StandXキュレーション</div>
+            <div class="catcard-desc">StandXが選定した外部の価格情報源と連動します。</div>
+          </div>
+          <div class="catcard">
+            <div class="catcard-tag">Open Grid</div>
+            <div class="catcard-label">Sponsor提供</div>
+            <div class="catcard-desc">Sponsor自身が用意した価格情報源を利用します。</div>
+          </div>
+        </div>
+
+        <h2>リスクの仕組みも共通の基盤の上にある</h2>
+        <p>Universal Marketsは、独立した別のリスクエンジンを持つわけではありません。Tradingで見たMargin・Liquidation・ADLという共通の基盤の上に、市場ごとのShield Vaultが上乗せされる形になっています。</p>
+
+        <div class="official-box">
+          <span>現在のMarket Parameters・Oracle Grid対応状況は変更される可能性があります。</span>
+          <a href="#">公式Docsで確認 ↗</a>
+        </div>
+
+        <div class="related-themes-slot"></div>
+
+        <div class="next-link-slot"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ FAQ ============ -->
+<div class="page" id="page-faq">
+  <div class="crumb" style="max-width:1080px;margin:0 auto;padding:18px 20px 0;">
+    <span class="back-btn" onclick="goBack();"><span class="arrow">←</span> 戻る</span>
+    <span class="sep">|</span>
+    <a href="#" onclick="goHome();return false;">Home</a><span class="sep">/</span><span class="current">FAQ</span>
+  </div>
+
+  <div class="guide-layout" style="margin-top:20px;">
+    <aside class="sidebar" data-theme="" data-mode="beginner"></aside>
+
+    <div class="guide-main">
+      <div class="sidebar-toggle mobile-menu-btn" onclick="openSidebar()">☰ メニュー</div>
+
+      <div class="page-header" style="padding-top:0;">
+        <h1 class="page-title">FAQ</h1>
+        <p class="page-lead">「困ったとき」に読むページです。用語の意味を調べたい場合はGlossaryをご利用ください。</p>
+      </div>
+
+      <div class="content" style="padding-top:32px;">
+
+        <div class="faq-group-label">DUSD</div>
+        <div class="faq-card">
+          <div class="faq-q"><span class="faq-q-mark">Q.</span>DUSDを保有しているだけで本当にYieldは増えますか？</div>
+          <div class="faq-a">はい、追加の操作は必要ありません。ただしYieldの料率は固定ではなく、市場状況に応じて変動します。保証された利回りではない点にご注意ください。現在の料率は公式Docsでご確認いただけます。</div>
+        </div>
+        <div class="faq-card">
+          <div class="faq-q"><span class="faq-q-mark">Q.</span>DUSDの価格が1ドルから外れることはありますか？</div>
+          <div class="faq-a">DUSDはデルタニュートラルな設計（原資産の現物＋Short Perpetual）によって価格の安定を図っていますが、市場の急変時など一時的に価格が変動する可能性は理論上あります。他のステーブルコインと同様、絶対的な価格維持を保証するものではありません。</div>
+        </div>
+        <div class="faq-card">
+          <div class="faq-q"><span class="faq-q-mark">Q.</span>MintしたDUSDはすぐに取引に使えますか？</div>
+          <div class="faq-a">Mintが完了すれば、そのままPerpsの証拠金として利用できます。特別な待機時間は設けられていません。</div>
+        </div>
+        <div class="faq-card">
+          <div class="faq-q"><span class="faq-q-mark">Q.</span>DUSDを償還する際、いつでも全額戻せますか？</div>
+          <div class="faq-a">Redemption（償還）には最低償還量や手数料が設定されている場合があります。全額を即座に戻せるとは限らないため、具体的な条件は公式Docsでご確認ください。</div>
+        </div>
+
+        <div class="faq-group-label">Trading</div>
+        <div class="faq-card">
+          <div class="faq-q"><span class="faq-q-mark">Q.</span>レバレッジを上げるとどうなりますか？</div>
+          <div class="faq-a">同じ資金でより大きなPositionを持てるようになりますが、Marginの余裕が小さくなるため、小さな価格変動でも強制清算（ロスカット）に近づきやすくなります。レバレッジは資金効率とリスクのトレードオフです。</div>
+        </div>
+        <div class="faq-card">
+          <div class="faq-q"><span class="faq-q-mark">Q.</span>強制清算されそうな時、何ができますか？</div>
+          <div class="faq-a">Marginを追加する、Positionの一部を自分の意思で決済する、といった対応が考えられます。基準を下回った瞬間に即座に清算されるわけではないため、状況を確認する余地はあります。</div>
+        </div>
+        <div class="faq-card">
+          <div class="faq-q"><span class="faq-q-mark">Q.</span>Cross MarginとIsolated Margin、どちらを選べばいいですか？</div>
+          <div class="faq-a">Cross Marginは複数のPositionで証拠金を共有でき資金効率に優れますが、一つのPositionの損失が他に影響しうる点に注意が必要です。Isolated Marginはリスクを個別のPositionに封じ込められますが、証拠金効率では劣ります。どちらが適切かは取引スタイル次第で、Guideとして一方を推奨するものではありません。</div>
+        </div>
+        <div class="faq-card">
+          <div class="faq-q"><span class="faq-q-mark">Q.</span>Fundingがマイナスになることはありますか？</div>
+          <div class="faq-a">はい。FundingはLongとShortの間でやり取りされる支払いで、市場の状況によって受け取る側と支払う側が入れ替わります。常にプラスとは限りません。</div>
+        </div>
+        <div class="faq-card">
+          <div class="faq-q"><span class="faq-q-mark">Q.</span>TP/SLを設定したのに想定と違う価格で決済されました。なぜですか？</div>
+          <div class="faq-a">通常のTP/SLは、指定価格に達すると機械的に注文が送信される仕組みのため、スリッページや瞬間的な価格変動の影響を受けることがあります。StandXにはこれを軽減する選択肢としてBlock Options（SIP-4）という仕組みも用意されています。</div>
+        </div>
+
+        <div class="faq-group-label">Yield</div>
+        <div class="faq-card">
+          <div class="faq-q"><span class="faq-q-mark">Q.</span>複数のYield（DUSD／Position／Maker）は同時に受け取れますか？</div>
+          <div class="faq-a">はい。それぞれ評価対象が異なる独立した仕組みなので、条件を満たせば同時に受け取れます。DUSDを保有しながらPositionを持ち、同時にMakerとして活動することも可能です。</div>
+        </div>
+        <div class="faq-card">
+          <div class="faq-q"><span class="faq-q-mark">Q.</span>Positionをすぐに閉じるとYieldは減りますか？</div>
+          <div class="faq-a">Position Yieldは保有時間を評価する仕組みのため、短期間で開いては閉じる取引を繰り返しても対象になりにくい設計です。最低でも1回のFundingサイクルを経る必要があります。</div>
+        </div>
+
+        <div class="faq-group-label">Maker</div>
+        <div class="faq-card">
+          <div class="faq-q"><span class="faq-q-mark">Q.</span>Maker Hoursを増やすにはどうすればいいですか？</div>
+          <div class="faq-a">注文サイズを大きくする、Mark Priceに近い価格で発注する、板に注文を出し続ける時間を長くする、という3つの要因を組み合わせることで増やせます。価格に近く発注すれば、少ない資金でも同じ評価を得られます。</div>
+        </div>
+        <div class="faq-card">
+          <div class="faq-q"><span class="faq-q-mark">Q.</span>資金が少なくてもMakerになれますか？</div>
+          <div class="faq-a">はい。Maker Hoursは資金量だけでなくMark Priceへの近さ（Proximity）も評価対象になるため、価格に近く発注する工夫次第で、少ない資金でも一定の評価を得ることが可能です。</div>
+        </div>
+        <div class="faq-card">
+          <div class="faq-q"><span class="faq-q-mark">Q.</span>Makerになるのに申請は必要ですか？</div>
+          <div class="faq-a">いいえ。Order Bookに買い注文と売り注文を出すこと自体がMakerとしての活動になり、特別な申請手続きは必要ありません。</div>
+        </div>
+
+        <div class="faq-group-label">Vault</div>
+        <div class="faq-card">
+          <div class="faq-q"><span class="faq-q-mark">Q.</span>Vaultに入れた資金はすぐに引き出せますか？</div>
+          <div class="faq-a">Vaultの種類や運用状況によって、引き出しまでに一定の日数がかかる場合があります。即時に引き出せるとは限らないため、余裕を持った資金計画をおすすめします。具体的な条件は公式Docsでご確認ください。</div>
+        </div>
+        <div class="faq-card">
+          <div class="faq-q"><span class="faq-q-mark">Q.</span>Vaultに入れた資金が減ることはありますか？</div>
+          <div class="faq-a">はい。特にShield Vaultは清算処理で生じた損失を吸収する役割を持つため、市場の状況によっては資本が目減りする可能性があります。Vaultへの拠出には一定のリスクが伴うことをご理解の上でご利用ください。</div>
+        </div>
+        <div class="faq-card">
+          <div class="faq-q"><span class="faq-q-mark">Q.</span>どのVaultが自分に向いているか教えてもらえますか？</div>
+          <div class="faq-a">Strategy・Reward・Shieldはそれぞれ目的（取引資金・報酬原資・保険資本）が異なる仕組みです。どれが適切かはご自身の目的やリスク許容度によるため、このGuideとして特定のVaultを推奨することはできません。それぞれの役割を理解した上で、ご自身で判断ください。</div>
+        </div>
+
+        <div class="faq-group-label">Universal Markets</div>
+        <div class="faq-card">
+          <div class="faq-q"><span class="faq-q-mark">Q.</span>本当に誰でも市場を作れるのですか？</div>
+          <div class="faq-a">はい、事前の許可は必要ありません。ただし「何をしてもよい」という意味ではなく、オラクルや清算などのルールに従う必要があります。Trading Gateという関門を通過するまで、市場は実際には稼働しません。</div>
+        </div>
+        <div class="faq-card">
+          <div class="faq-q"><span class="faq-q-mark">Q.</span>自分で市場を作るには何が必要ですか？</div>
+          <div class="faq-a">Sponsorとして資産をステークし、市場のパラメータやOracle Grid（価格参照方式）を設定し、Shield Vaultなどの条件を満たす必要があります。詳しい手順は公式Docsをご確認ください。</div>
+        </div>
+        <div class="faq-card">
+          <div class="faq-q"><span class="faq-q-mark">Q.</span>新しく作られた市場は安全ですか？</div>
+          <div class="faq-a">Universal Marketsは独立した別のリスクエンジンを持つわけではなく、StandX Perps全体に共通するMargin・Liquidation・ADLという基盤の上で運用されます。ただし市場ごとにShield Vaultの充足状況が異なるため、新しい市場ほど注意深く確認することをおすすめします。</div>
+        </div>
+
+        <div class="faq-group-label">StandX全体について</div>
+        <div class="faq-card">
+          <div class="faq-q"><span class="faq-q-mark">Q.</span>StandXは安全ですか？</div>
+          <div class="faq-a">DUSD（ステーブルコイン部分）とHighway（ブリッジ関連）については、複数の第三者機関による監査が公開されています。ただし、Perps本体（取引・清算の仕組み）を対象にした第三者監査が公開リストに含まれているかは、私たちが確認できた範囲では明確ではありません。ご自身でリスクを評価した上でご利用ください。</div>
+        </div>
+        <div class="faq-card">
+          <div class="faq-q"><span class="faq-q-mark">Q.</span>StandXの手数料はどこで確認できますか？</div>
+          <div class="faq-a">取引手数料・清算手数料などの料率は変更される可能性があるため、このGuideには具体的な数値を記載していません。最新の手数料体系は公式Docsでご確認ください。</div>
+        </div>
+        <div class="faq-card">
+          <div class="faq-q"><span class="faq-q-mark">Q.</span>ガバナンストークンはいつ発行されますか？</div>
+          <div class="faq-a">2026年8月時点で、StandXのプラットフォームトークンはまだ発行されていません。発行時期については公式のアナウンスをご確認ください。</div>
+        </div>
+        <div class="faq-card">
+          <div class="faq-q"><span class="faq-q-mark">Q.</span>スマートフォンでもStandXは使えますか？</div>
+          <div class="faq-a">公式Docsにモバイル利用に関する案内が用意されています。詳しくは公式サイトをご確認ください。</div>
+        </div>
+        <div class="faq-card">
+          <div class="faq-q"><span class="faq-q-mark">Q.</span>SNSの公式アカウントはありますか？</div>
+          <div class="faq-a">X（旧Twitter）公式アカウント（<a href="https://x.com/standx_official" target="_blank" rel="noopener">@StandX_Official</a>）で最新情報が発信されています。</div>
+        </div>
+        <div class="faq-card">
+          <div class="faq-q"><span class="faq-q-mark">Q.</span>コミュニティはありますか？</div>
+          <div class="faq-a">公式Discordコミュニティ（<a href="https://discord.gg/standx" target="_blank" rel="noopener">discord.gg/standx</a>）があり、多くのユーザーが参加しています。</div>
+        </div>
+
+        <div class="official-box">
+          <span>このFAQで扱っていない疑問は、Glossary（用語）またはOfficial Resources（公式資料）もあわせてご確認ください。</span>
+          <a href="#">公式Docsで確認 ↗</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ GLOSSARY ============ -->
+<div class="page" id="page-glossary">
+  <div class="crumb" style="max-width:1080px;margin:0 auto;padding:18px 20px 0;">
+    <span class="back-btn" onclick="goBack();"><span class="arrow">←</span> 戻る</span>
+    <span class="sep">|</span>
+    <a href="#" onclick="goHome();return false;">Home</a><span class="sep">/</span><span class="current">Glossary</span>
+  </div>
+
+  <div class="guide-layout" style="margin-top:20px;">
+    <aside class="sidebar" data-theme="" data-mode="beginner"></aside>
+
+    <div class="guide-main">
+      <div class="sidebar-toggle mobile-menu-btn" onclick="openSidebar()">☰ メニュー</div>
+
+      <div class="page-header" style="padding-top:0;">
+        <h1 class="page-title">Glossary</h1>
+        <p class="page-lead">StandX Guide内で使われている用語の一覧です。本文中の用語をタップした際のポップアップと同じ内容です。</p>
+      </div>
+
+      <div class="content" style="padding-top:32px;">
+        <div id="glossary-list"><!-- JSでtermsから自動生成 --></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ SIP LIBRARY ============ -->
+<div class="page" id="page-sip-library">
+  <div class="crumb" style="max-width:1080px;margin:0 auto;padding:18px 20px 0;">
+    <span class="back-btn" onclick="goBack();"><span class="arrow">←</span> 戻る</span>
+    <span class="sep">|</span>
+    <a href="#" onclick="goHome();return false;">Home</a><span class="sep">/</span><span class="current">SIP Library</span>
+  </div>
+
+  <div class="guide-layout" style="margin-top:20px;">
+    <aside class="sidebar" data-theme="" data-mode="beginner"></aside>
+
+    <div class="guide-main">
+      <div class="sidebar-toggle mobile-menu-btn" onclick="openSidebar()">☰ メニュー</div>
+
+      <div class="page-header" style="padding-top:0;">
+        <h1 class="page-title">SIP Library</h1>
+        <p class="page-lead">設計・変更の背景を辿る場所です。各機能の詳しい仕組みはBeginner/Standardの各ページをご覧ください。</p>
+      </div>
+
+      <div class="content" style="padding-top:32px;">
+        <h2>SIPとは？</h2>
+        <p><span class="term" onclick="showPopup('sip')">SIP（StandX Improvement Proposal）</span>は、StandXのプロトコルに新しい機能や変更を加えるための、公式な提案の仕組みです。番号ごとに個別の提案として管理され、実装後はその変更の正式な記録として残ります。</p>
+
+        <h2>SIP Index</h2>
+
+        <div class="sip-card">
+          <div class="sip-head">
+            <span class="sip-number">SIP-1</span>
+            <span class="sip-title">Block Trade</span>
+            <span class="sip-status implemented">Implemented</span>
+          </div>
+          <div class="sip-desc">クロスチェーンでの大口取引を、通常のOrder Bookとは別の経路で実行できるようにする提案です。大口の取引が市場価格に不必要な影響を与えないようにすることが目的です。</div>
+          <span class="sip-see-also" onclick="goToGlossary('block-trade')">Glossaryで詳細を見る →</span>
+        </div>
+
+        <div class="sip-card">
+          <div class="sip-head">
+            <span class="sip-number">SIP-2</span>
+            <span class="sip-title">Position Yield</span>
+            <span class="sip-status implemented">Implemented</span>
+          </div>
+          <div class="sip-desc">取引量だけでなく、Positionを保有し続けること自体を評価対象にする提案です。短期的な売買の繰り返しではなく、市場に参加し続けることに価値を認める設計です。</div>
+          <span class="sip-see-also" onclick="goToGlossary('position-yield-layer')">Glossaryで詳細を見る →</span>
+        </div>
+
+        <div class="sip-card">
+          <div class="sip-head">
+            <span class="sip-number">SIP-3</span>
+            <span class="sip-title">DUSD Native Yield Expansion</span>
+            <span class="sip-status implemented">Implemented</span>
+          </div>
+          <div class="sip-desc">Perpsの取引手数料の一部を、DUSD Yieldプールへ還流させる提案です。DUSDのYieldが、StandXの基礎運用だけでなく取引活動そのものからも生まれるようにすることが目的です。</div>
+          <span class="sip-see-also" onclick="goToGlossary('dusd-yield-layer')">Glossaryで詳細を見る →</span>
+        </div>
+
+        <div class="sip-card">
+          <div class="sip-head">
+            <span class="sip-number">SIP-4</span>
+            <span class="sip-title">Block Options</span>
+            <span class="sip-status implemented">Implemented</span>
+          </div>
+          <div class="sip-desc">Take Profit / Stop Lossを、あらかじめ確保できる「権利」として扱えるようにする提案です。通常のトリガー注文が抱えるスリッページ等の課題に対応することが目的です。</div>
+          <span class="sip-see-also" onclick="goToGlossary('block-options')">Glossaryで詳細を見る →</span>
+        </div>
+
+        <div class="sip-card">
+          <div class="sip-head">
+            <span class="sip-number">SIP-5</span>
+            <span class="sip-title">Universal Markets Listing</span>
+            <span class="sip-status wip">WIP</span>
+          </div>
+          <div class="sip-desc">誰でも公開されたルールに従って市場を作れるようにする、最も規模の大きい提案です。複数のフェーズに分けて段階的に実装されており、SIP-5A・5B・5Cはその子提案にあたります。</div>
+          <span class="sip-see-also" onclick="goToGlossary('universal-markets')">Glossaryで詳細を見る →</span>
+        </div>
+
+        <div class="sip-card child">
+          <div class="sip-head">
+            <span class="sip-number">SIP-5A</span>
+            <span class="sip-title">Community Maker Yield</span>
+            <span class="sip-status implemented">Implemented</span>
+          </div>
+          <div class="sip-desc">SIP-5の第一実装フェーズです。旧Market Maker Uptime Programを発展させ、取引量ではなく実際に使えるLiquidityそのものへ報酬を出す仕組みです。</div>
+          <span class="sip-see-also" onclick="goToGlossary('maker-yield-layer')">Glossaryで詳細を見る →</span>
+        </div>
+
+        <div class="sip-card child">
+          <div class="sip-head">
+            <span class="sip-number">SIP-5B</span>
+            <span class="sip-title">Community Vaults</span>
+            <span class="sip-status implemented">Implemented</span>
+          </div>
+          <div class="sip-desc">SIP-5の第二実装フェーズです。Universal MarketsのCapital（取引資金・報酬原資・保険資本）を、コミュニティが提供できるようにする仕組みです。</div>
+          <span class="sip-see-also" onclick="goToGlossary('vault')">Glossaryで詳細を見る →</span>
+        </div>
+
+        <div class="sip-card child">
+          <div class="sip-head">
+            <span class="sip-number">SIP-5C</span>
+            <span class="sip-title">（次フェーズ・詳細未公開）</span>
+            <span class="sip-status draft">Draft</span>
+          </div>
+          <div class="sip-desc">SIP-5の次フェーズとして提案段階にあります。詳細はまだ公式に公開されていません。</div>
+          <span class="sip-see-also" onclick="goToGlossary('sip-5c')">Glossaryで詳細を見る →</span>
+        </div>
+
+        <div class="official-box">
+          <span>各SIPの正式な仕様・実装日時は変更される可能性があります。</span>
+          <a href="#">公式Docsで確認 ↗</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ OFFICIAL RESOURCES ============ -->
+<div class="page" id="page-official-resources">
+  <div class="crumb" style="max-width:1080px;margin:0 auto;padding:18px 20px 0;">
+    <span class="back-btn" onclick="goBack();"><span class="arrow">←</span> 戻る</span>
+    <span class="sep">|</span>
+    <a href="#" onclick="goHome();return false;">Home</a><span class="sep">/</span><span class="current">Official Resources</span>
+  </div>
+
+  <div class="guide-layout" style="margin-top:20px;">
+    <aside class="sidebar" data-theme="" data-mode="beginner"></aside>
+
+    <div class="guide-main">
+      <div class="sidebar-toggle mobile-menu-btn" onclick="openSidebar()">☰ メニュー</div>
+
+      <div class="page-header" style="padding-top:0;">
+        <h1 class="page-title">Official Resources</h1>
+        <p class="page-lead">StandXの最新情報・正式な仕様は、こちらの公式リソースでご確認いただけます。</p>
+      </div>
+
+      <div class="content" style="padding-top:32px;">
+        <a class="resource-card" href="https://standx.com/" target="_blank" rel="noopener">
+          <div>
+            <div class="resource-title">Website</div>
+            <div class="resource-desc">StandX公式サイト</div>
+          </div>
+          <span class="resource-arrow">↗</span>
+        </a>
+
+        <a class="resource-card" href="https://docs.standx.com/" target="_blank" rel="noopener">
+          <div>
+            <div class="resource-title">Docs</div>
+            <div class="resource-desc">公式ドキュメント。仕様・条件・最新の数値はこちらが正式な情報源です</div>
+          </div>
+          <span class="resource-arrow">↗</span>
+        </a>
+
+        <a class="resource-card" href="https://x.com/standx_official" target="_blank" rel="noopener">
+          <div>
+            <div class="resource-title">X（旧Twitter）</div>
+            <div class="resource-desc">公式アカウント。最新のお知らせが発信されます</div>
+          </div>
+          <span class="resource-arrow">↗</span>
+        </a>
+
+        <a class="resource-card" href="https://discord.gg/standx" target="_blank" rel="noopener">
+          <div>
+            <div class="resource-title">Discord</div>
+            <div class="resource-desc">公式コミュニティ</div>
+          </div>
+          <span class="resource-arrow">↗</span>
+        </a>
+
+        <a class="resource-card" href="https://docs.standx.com/standx-api/standx-api" target="_blank" rel="noopener">
+          <div>
+            <div class="resource-title">Perps API Reference</div>
+            <div class="resource-desc">開発者向け。HTTP API・WebSocket APIの技術仕様</div>
+          </div>
+          <span class="resource-arrow">↗</span>
+        </a>
+
+        <a class="resource-card" href="https://docs.standx.com/sip/sip" target="_blank" rel="noopener">
+          <div>
+            <div class="resource-title">SIP Index（公式）</div>
+            <div class="resource-desc">全SIPの正式な一覧とステータス</div>
+          </div>
+          <span class="resource-arrow">↗</span>
+        </a>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="sidebar-scrim" id="sidebar-scrim" onclick="closeSidebar()"></div>
+
+<button class="fab-back" id="fab-back" onclick="goBack()" aria-label="前のページに戻る">←</button>
+<button class="fab-menu" id="fab-menu" onclick="openSidebar()" aria-label="メニューを開く">☰</button>
+
+<div class="popup-overlay" id="popup-overlay" onclick="if(event.target===this)hidePopup()">
+  <div class="popup">
+    <button class="popup-close" onclick="hidePopup()" aria-label="閉じる">×</button>
+    <div class="popup-term" id="popup-term">Liquidity</div>
+    <div class="popup-desc" id="popup-desc">市場で売買を成立させるために利用できる資金や注文のことです。</div>
+    <div class="popup-more" id="popup-more" onclick="goToGlossary()">詳しく見る →</div>
+  </div>
+</div>
+
+<footer>
+  <span>StandX Guide — 非公式ガイド</span>
+  <span>Official Docs ↗ · X ↗ · Discord ↗</span>
+</footer>
+
+<script>
+const terms = {
+  'yield-bearing': ['Yield-bearing Stablecoin',
+    '価格が安定しているだけでなく、保有しているだけで自動的に利回りが発生するステーブルコインです。',
+    '一般的なステーブルコインは「価格を1ドルに保つこと」だけを目的としますが、Yield-bearing Stablecoinはそこに「保有しているだけで増える」という収益機能を組み合わせています。StandXのDUSDがこれにあたり、ステーキングのような追加操作は一切不要です。ウォレットに置いておくだけでも、Perpsの証拠金として使っていても、対象になります。'],
+  'yield': ['Yield',
+    'DUSD保有やPosition保有などの行動に応じて得られる継続的な収益のことです。',
+    'StandXにおけるYieldは1種類ではなく、DUSD Yield・Position Yield・Maker Yieldという3つの層に分かれています。それぞれ評価している対象（保有量・保有時間・流動性提供量）が異なり、いずれも共通のTrading Feesから分配される仕組みになっています。'],
+  'margin': ['Margin',
+    'Positionを維持するために担保として差し入れる資金のことです。',
+    'MarginはPositionの損益と連動して増減します。StandXではDUSDがMarginとして使われ、証拠金として拘束されている間もYieldの対象になり続けるのが特徴です。Marginの水準はMark Priceを基準に常時判定されており、維持基準を下回ると強制清算の検討が始まります。'],
+  'mint': ['Mint',
+    'USDTやUSDCなどをDUSDへ変換して発行することです。',
+    'Mintによって、預け入れた資産と同額のDUSDが発行されます。この逆の操作がRedemption（償還）で、DUSDをUSDTやUSDCへ戻すことができます。Mint後のDUSDは、そのままPerpsの証拠金として使うことも、保有し続けてYieldを受け取ることもできます。'],
+  'perps': ['Perpetual Futures',
+    '満期のない先物取引です。現物を保有せずに、価格変動そのものに対してLong/Shortのポジションを取れます。',
+    '通常の先物取引には決済期日がありますが、Perpetual Futuresにはそれがなく、Marginを維持できる限りポジションを持ち続けられます。Long/Short間で定期的にやり取りされるFundingという仕組みによって、価格が現物価格から大きく乖離しないよう調整されています。'],
+  'order': ['Order',
+    '「この価格・数量で売買したい」という意思表示です。Executionされるまでは市場に反映されません。',
+    'Orderを出しただけではPositionは生まれません。Order BookにOrderが並び、対になる注文とExecution（約定）して初めてPositionとして成立します。Orderを出す側の役割によってMaker（板に注文を置く）とTrader（既存の注文を取りに行く）に分かれます。'],
+  'execution': ['Execution',
+    'Orderが実際に約定し、Positionとして成立することです。',
+    'Executionは、買い注文と売り注文が価格・数量で一致した瞬間に発生します。StandXは完全オンチェーンのOrder Bookを採用しているため、Executionの過程も含めて全ての取引履歴がブロックチェーン上で検証可能です。'],
+  'position': ['Position',
+    '保有中のLong/Shortの持ち高のことです。Marginと連動して損益が変動します。',
+    'Positionを保有している間は、価格変動による含み損益（PnL）に加えて、Fundingの支払い・受け取りも継続的に発生します。Positionを一定時間保ち続けること自体もPosition Yieldの評価対象になり、単なる「持っている状態」以上の意味を持ちます。'],
+  'funding': ['Funding',
+    'Long/Shortの間で定期的にやり取りされる支払いです。StandXが徴収する手数料ではありません。',
+    'Fundingは、Perpetual Futuresの価格を現物価格に近づけるための仕組みです。StandXが利益として受け取るものではなく、あくまでLongを持つトレーダーとShortを持つトレーダーの間で直接やり取りされます。DUSDのYield源泉の一つ（Short Perpetualの保有によるFunding収益）にも関係しています。'],
+  'liquidation': ['強制清算（Liquidation）',
+    'Marginが維持基準を下回った際に、Positionが強制的に決済されることです。「ロスカット」とも呼ばれます。',
+    '維持基準を下回った瞬間に即座に決済されるわけではなく、Order Book→Shield Vault→ADLという段階を踏んだ防御構造になっています。この段階構造は、プラットフォーム全体の支払い能力を維持しながら、最終手段であるADLの発動をできる限り避けるために設計されています。'],
+  'dusd-holding': ['DUSD保有',
+    'DUSDをウォレットやPerpsの証拠金として持っている状態のことです。',
+    'DUSDを保有しているだけでDUSD Yieldの対象になります。取得経路（Mint・購入・送金のいずれか）は問われず、ステーキングのような追加の手続きも不要です。'],
+  'position-holding': ['Position保有',
+    'Long/ShortのPositionを一定時間保ち続けている状態のことです。',
+    'SIP-2で導入されたPosition Yieldの評価対象です。Positionを開いた経路（通常のOrder Book経由かBlock Trade経由か）を問わず、保有時間が長いほど評価されます。短期間で持っては閉じるという行為の繰り返しでは、この評価の対象になりにくい設計です。'],
+  'staking-free': ['ステーキング不要',
+    '資産をロックしたり預け入れたりする追加の手続きなしで、保有しているだけでYieldの対象になることです。',
+    '多くのDeFiプロトコルでは、Yieldを得るために資産を専用のコントラクトにロックする必要がありますが、DUSDにはその手間がありません。ウォレットに置いているだけでも、Perpsの証拠金として使っていても、同じようにYieldの対象になります。'],
+  'liquidity': ['Liquidity',
+    '市場で売買を成立させるために利用できる注文や資金の厚みのことです。',
+    'Liquidityが厚い市場ほど、大きな注文でも価格に与える影響が小さく、安定した取引が可能になります。StandXではMakerがOrder Bookに両側の注文を置くことでLiquidityが生まれ、その貢献度がMaker Hoursとして評価されます。'],
+  'order-book': ['Order Book',
+    '買い注文と売り注文が価格順に並んだ一覧です。厚みがあるほど、価格が安定しやすくなります。',
+    'StandXのOrder Bookは完全オンチェーンで運用されており、発注から約定までの全過程がブロックチェーン上で検証可能です。清算処理も、まずこのOrder Bookでの通常の決済が試みられてから、Shield Vault・ADLという次の段階に進みます。'],
+  'maker-hours': ['Maker Hours',
+    'Makerが板にLiquidityを提供し続けた実績を時間として積み上げたものです。',
+    '単純な稼働時間だけでなく、注文サイズ（Order Size）とMark Priceへの近さ（Proximity）を組み合わせて評価されます。価格に近く発注すれば、少ない資本でも多くのMaker Hoursを積み上げられるという関係があり、累積実績に応じて手数料優遇の段階（Tier）も上がっていきます。'],
+  'capital-pool': ['資金のプール',
+    '特定の目的のために確保され、必要な時に用いられる資金のまとまりのことです。',
+    'StandXのVault（Strategy／Reward／Shield）は、いずれもこの「資金のプール」という性質を持ちますが、それぞれ用途が明確に分離されています。ある目的のための資金が、別の目的に流用されることはありません。'],
+  'risk-isolation': ['役割の分離',
+    '取引用・報酬用・保険用の資金を別々に管理することで、ある用途の資金が他の用途に影響しないようにする設計のことです。',
+    'Strategy Vault（取引資金）・Reward Vault（報酬原資）・Shield Vault（保険資本）を分離することで、例えば清算処理でShield Vaultが目減りしても、Makerへの報酬原資であるReward Vaultには影響しません。逆にReward Vaultが枯渇しても、保険機能自体は維持されます。'],
+  'sponsor': ['Sponsor',
+    'ルールに従って市場を作り、育てていく主体のことです。市場の所有者ではありません。',
+    'Sponsorは、資産をステークして市場を提案し、Market Parametersを設定し、Reward VaultとShield Vaultを用意する役割を担います。ただし、市場が稼働した後も所有権を持つわけではなく、あくまで公開されたルールの範囲内で市場の立ち上げと初期の維持を担う「Market Initiator」という位置づけです。'],
+  'permissionless': ['Permissionless',
+    '事前の許可を必要としないことです。ただし、ルールが存在しないという意味ではありません。',
+    'Universal Marketsの核心的な考え方です。誰でも市場を作れる一方で、オラクルの参照方法・清算の仕組み・Shield Vaultの充足条件といったルールは公開された形で定められています。「許可不要」と「無秩序」は異なる、という点がこの用語の最も重要な部分です。'],
+  'oracle-grid': ['Oracle Grid',
+    '市場の価格情報をどこから参照するかの方式です。市場によって参照方法が異なります。',
+    '3つの方式があります。外部指標を一切使わないBlind Grid、StandXがキュレーションした外部情報源と連動するLinked Grid、Sponsor自身が用意した情報源を使うOpen Gridです。どの方式を選ぶかによって、その市場の価格形成の性質が変わります。'],
+  'fee-routing': ['Fee Routing',
+    'Perpsで発生した取引手数料の一部を、DUSD Yieldプールへ還流させる仕組みのことです（SIP-3）。',
+    'この仕組みにより、DUSDのYieldはStandXの基礎的な運用（原資産のステーキング・Short Perpetualの Funding）だけでなく、Perpsでの取引活動そのものからも生まれるようになりました。取引が活発になるほどDUSD Yieldも向上し、それがさらなるDUSD需要につながるという循環構造の起点になっています。'],
+  'mark-price': ['Mark Price',
+    '直近の約定価格だけに頼らず、複数の参照値を組み合わせて算出する基準価格です。清算判定などに使われ、一時的な価格の歪みに影響されにくい設計です。',
+    'Order Book上の直近約定価格（Last Price）は、一時的な価格の歪みの影響を受けやすいため、清算のような重要な判定にはそのまま使われません。Mark PriceはFunding・Liquidation・ADLという複数の仕組みから共通して参照される基準であり、Marginの水準判定もこの価格を基準に行われます。'],
+  'adl': ['ADL（Auto-Deleveraging）',
+    '清算処理がOrder BookやVaultだけでは間に合わない場合に発動する、最終手段としての自動デレバレッジのことです。',
+    'Marginが維持基準を下回っても、即座にADLが発動するわけではありません。まずOrder Bookでの通常の清算処理が試みられ、それでも処理しきれない分はShield Vaultが吸収します。ADLはこの2段階を経てもなお不足した場合にのみ発動します。他の健全なポジション保有者（多くの場合、含み益の大きい高レバレッジのポジション）を巻き込んで強制的に決済させる仕組みであるため、最後の手段として位置づけられています。'],
+  'position-yield-layer': ['SIP-2（Position Yield）',
+    'SIP-2により導入された、Positionの保有時間を評価するYield層です。',
+    'この提案が導入された背景には、「取引量」だけを評価する設計では、市場に参加し続けること自体の価値が見過ごされる、という課題がありました。開設経路（通常のOrder Book経由かBlock Trade経由か）を問わず、成立したPositionであれば同じ枠組みで評価されます。短期間で開いては閉じるサイクリングによる報酬の搾取を防ぐため、最低でも1回のFundingサイクルを経ないと加算対象になりません。'],
+  'dusd-yield-layer': ['SIP-3（DUSD Yield）',
+    'SIP-3により拡張された、DUSDの保有量を評価するYield層です。',
+    'SIP-3が導入される以前、DUSDのYieldは原資産のステーキング収益とShort PerpetualのFundingという、StandXの基礎運用にのみ由来していました。この提案により、Perpsの取引手数料の一部もこの層に還流するようになり、DUSDのYieldが取引活動そのものからも生まれる循環構造が生まれました。DUSDを保有しているだけで対象になり、Perpsでの証拠金としての利用中も継続して評価されます。'],
+  'maker-yield-layer': ['SIP-5A（Maker Yield）',
+    'SIP-5Aにより導入された、Order Bookへの流動性提供を評価するYield層です。',
+    'SIP-5は複数フェーズに分けて実装される提案で、SIP-5Aはその最初の実装フェーズにあたります。旧Market Maker Uptime Programを発展させた仕組みで、単純な取引量ではなく、実際に使えるLiquidityそのものへ報酬を出すことを目的としています。Order Size・Proximity・Uptimeという3要因の組み合わせで評価されるMaker Hoursが、この層の基礎になっています。'],
+  'delta-neutral': ['デルタニュートラル',
+    '価格が上がっても下がっても、資産全体の価値が変動しないように設計された状態のことです。現物の値動きとShort Perpetualの値動きが互いに打ち消し合うことで実現します。',
+    'DUSDの裏付け資産は、原資産（ETHやSOLなど）の現物ポジションと、それに対するShort Perpetualポジションの組み合わせで構成されています。現物の価格が上がればShort Perpetualは含み損になり、逆に現物が下がればShort Perpetualは含み益になるため、両者が互いに打ち消し合い、DUSDの裏付け価値全体としては価格変動の影響を受けにくくなります。'],
+  'maintenance-margin': ['維持基準',
+    'Positionを保ち続けるために最低限必要な証拠金の水準のことです。これを下回ると清算の検討が始まります。',
+    '維持基準はMark Priceを基準に常時判定されています。基準を下回った瞬間に即座に決済されるわけではなく、Order Book→Shield Vault→ADLという段階的な防御構造の中で処理されます。'],
+  'trading-fees': ['Trading Fees',
+    'Perpsでの取引に対してStandXが受け取る手数料のことです。この一部が複数のYieldへ分配されます。',
+    'Trading Feesは、Position Yield（SIP-2）・DUSD Yield（SIP-3）・Maker Yield（SIP-5A）という3つの層に分配される共通の原資です。取引が活発になるほど、これら3つのYield全体の水準にも影響します。'],
+  'proximity': ['Proximity（近さ）',
+    '注文価格がMark Priceにどれだけ近いかを表す指標です。近いほど、Order Bookの安定に貢献していると評価されます。',
+    'Maker Hoursを構成する3要因の一つです。価格に近く発注するほど、少ない資本でも高い評価（Maker Hours）を得られるため、大きな資金を持たないMakerでも、発注の工夫次第で大きな資金を持つMakerと同等の評価を得ることが可能になります。'],
+  'capital-efficiency': ['資本効率の考え方',
+    '同じ評価を得るために必要な資金の量は、発注の仕方（サイズや価格の近さ）によって変わる、という考え方です。',
+    'Maker Hoursの設計に反映されている考え方です。単純に資金量の多寡だけで評価が決まるのではなく、Mark Priceへの近さ（Proximity）を高めることで、より少ない資本でも同じ評価を得られるようになっています。'],
+  'fee-tier': ['手数料優遇の段階（Tier）',
+    'Maker Hoursの累積実績に応じて、取引手数料の優遇レベルが段階的に上がっていく仕組みです。',
+    '積み上げたMaker Hoursが多いほど、取引コストそのものが下がっていきます。Rewardの分配とあわせて、Makerとして活動し続けるインセンティブが二重に用意されている形になります。'],
+  'trading-gate': ['Trading Gate',
+    '新しい市場が実際に取引可能になる前に通過する必要がある関門です。Shield Vaultなどの条件を満たすまで、市場は稼働しません。',
+    'Sponsorが市場を提案し、Market ParametersやOracle Gridを設定しただけでは、市場はまだ稼働しません。Shield Vaultの充足など、あらかじめ定められた条件を満たして初めてTrading Gateを通過し、Live Marketとして取引が可能になります。'],
+  'shield-vault': ['Shield Vault',
+    'Liquidationで生じうる損失を吸収するための保険資本です。清算の段階的な防御構造の一部を担っています。',
+    'Tradingで見た清算の段階（Order Book→Vault→ADL）の「Vault」は、まさにこのShield Vaultのことです。市場ごとに用意されており、新しい市場が稼働するにはSponsorによる最低限の拠出でこのVaultを充足させる必要があります。'],
+  'dusd': ['DUSD',
+    'StandXが発行するYield-bearing Stablecoinです。Perpsの証拠金として使われるほか、保有しているだけでYieldが発生します。',
+    'DUSDはBNB ChainとSolanaの両方で発行・利用できます。裏付けにはデルタニュートラルな設計（原資産の現物＋Short Perpetual）が使われており、Yieldは原資産のステーキング収益・Short PerpetualのFunding収益・Perps取引手数料の還流（SIP-3）という複数の源泉から生まれます。'],
+  'maker': ['Maker',
+    'Order BookにLiquidityを提供する人のことです。買い注文と売り注文の両方を出し、市場の厚みを支えます。',
+    'MakerはTraderと対になる役割です。板に注文を「置く」側であるMakerに対し、Traderはその注文を「取りに行く」側にあたります。Makerの活動（Order Size・Proximity・Uptime）はMaker Hoursとして評価され、Reward・手数料優遇の両面で報われる設計になっています。'],
+  'trader': ['Trader',
+    'Positionを持ち、Perpsで取引を行う人のことです。Makerが提供したLiquidityを使って売買を成立させます。',
+    'TraderとMakerは、板に注文を「置く」側か「取りに行く」側かという発注の仕方による分類であり、固定された身分ではありません。同じ人が状況によってどちらの役割も担うことができます。'],
+  'sip': ['SIP（StandX Improvement Proposal）',
+    'StandXのプロトコルに新しい機能や変更を加えるための、公式な提案の仕組みです。番号ごとに個別の提案として管理されます。',
+    'SIP-1（Block Trade）からSIP-5（Universal Markets）まで、これまでにいくつもの提案が実装されてきました。それぞれが独立した機能追加でありながら、DUSD・Perps・Maker・Vaultという既存の仕組みと接続する形で設計されている点が特徴です。設計の背景や経緯を辿りたい場合は、SIP Libraryが参照先になります。'],
+  'vault': ['SIP-5B（Vault）',
+    '特定の目的のために用意された資金のプールの総称です。StandXにはStrategy・Reward・Shieldという3種類があります。',
+    'SIP-5Bにより、Universal MarketsのCapitalをコミュニティが提供できるようになりました。それぞれ取引資金（Strategy）・Makerへの報酬原資（Reward）・清算時の保険資本（Shield）という異なる役割を持ち、目的ごとに資金が分離されています。ある用途の資金が別の用途に流用されることはありません。'],
+  'strategy-vault': ['Strategy Vault',
+    '取引のための資金として使われるVaultです。3種類のVaultのうち、Trading Capitalの役割を担います。',
+    'Reward Vault（Maker向けの報酬原資）やShield Vault（保険資本）とは異なる目的の資金プールです。3種類が明確に分離されていることで、それぞれの用途の資金が互いに影響し合わない設計になっています。'],
+  'reward-vault': ['Reward Vault',
+    'Makerへの報酬の原資として使われるVaultです。市場が育つほど、この資本も育つ設計になっています。',
+    'Reward Budget（原資）→Makerの増加→Order Bookの厚みの向上→Traderの増加→取引量の増加→手数料収益の増加→Reward Vaultへの再投入、という循環で設計されています。単なる報酬プールではなく、市場成長のための循環装置として機能します。'],
+  'universal-markets': ['SIP-5（Universal Markets）',
+    'Sponsorが公開されたルールに従って市場を作り、育てていくための仕組みです。誰でも市場を作れますが、ルールが無いわけではありません。',
+    'SIP-5は現時点でWIP（実装進行中）のステータスにあり、複数フェーズに分けて段階的に実装される提案です。Maker Yield（SIP-5A）とCommunity Vaults（SIP-5B）はすでに実装済みの子フェーズで、次のフェーズ（SIP-5C）はまだ詳細が公開されていません。市場はReward Vault（流動性インセンティブ）・Oracle Grid（価格参照方式）・Shield Vault（リスク吸収）という3つの要素に支えられています。独立した別のリスクエンジンを持つわけではなく、StandX Perps全体に共通するMargin・Liquidation・ADLという基盤の上に、市場ごとのShieldが上乗せされる構造です。'],
+  'sip-5c': ['SIP-5C（次フェーズ）',
+    'SIP-5（Universal Markets）の次の実装フェーズとして提案段階（Draft）にあるものです。詳細はまだ公式に公開されていません。',
+    'SIP-5A（Community Maker Yield）・SIP-5B（Community Vaults）に続く、SIP-5の3番目の子フェーズです。公式Docs上でも具体的な名称・仕様はまだ明かされておらず、現時点でGuideとしてお伝えできる確定情報はありません。動く情報のため、最新状況は公式Docsでご確認ください。'],
+  'block-trade': ['SIP-1（Block Trade）',
+    'クロスチェーンでの大口取引を実行する仕組みです。通常のOrder Bookとは別の経路で処理され、市場の価格形成には影響しません。',
+    '最大25のカウンターパーティが参加でき、段階的にマッチングするFlexibleと、全量が揃うまで決済されないFullMatchという2つの方式があります。マッチングはBSCやSolanaなどの発注元チェーン上で行われ、決済はStandXが担当します。マッチが記録されると、たとえ最終的な決済が成立しなくても、そのマッチ自体は取り消せません。'],
+  'block-options': ['SIP-4（Block Options）',
+    'Take Profit / Stop Lossを、あらかじめ確保できる「権利」として扱う仕組みです。通常のトリガー注文とは異なる設計になっています。',
+    '通常のTP/SLは、指定した価格に達すると機械的に注文が送信されるだけで、スリッページや一時的な急変動の影響をそのまま受けます。Block Optionsでは、Block TPで計画中の利確退出機会を対手に売却してReservation Feeを得たり、Block SLで限定的な費用を払って一時的な急落から保護される退出権を購入したりすることができます。'],
+  'supported-chains': ['対応チェーン（BNB Chain / Solana）',
+    'StandXがサービスを提供しているブロックチェーンです。DUSDはどちらのチェーン上でも発行・利用できます。',
+    'BNB ChainはBinanceが開発した、Solanaは独立したSolana Labsが開発した、それぞれ別の組織による独立したパブリックブロックチェーンです。StandXがこれらのチェーンを所有・運営しているわけではなく、両方のチェーンの上でサービスを展開している、という関係になります。DUSDはどちらのチェーンでも発行・保有・取引が可能で、ユーザーはどちらを使うか選択できます。'],
+  'index-price': ['Index Price',
+    '外部の複数の市場を参照して算出される、参考指標としての価格です。Mark Priceの算出要素の一つとして使われます。',
+    'Index PriceはStandX自身のOrder Book上の約定とは独立して、外部の市場動向を反映する役割を持ちます。Mark Priceはこの Index Priceを含む複数の参照値を組み合わせて算出されるため、StandX内の一時的な需給の偏りだけで清算が引き起こされることを防ぎます。'],
+  'last-price': ['Last Price',
+    'StandXのOrder Book上で直近に約定した価格のことです。Mark Priceとは異なり、清算の判定には直接使われません。',
+    'Last Priceは実際の取引の結果を反映する一方、板の薄い瞬間的な取引によって大きく動くこともあります。そのため、清算のような重要な判定には、より安定したMark Priceが使われます。'],
+  'cross-margin': ['Cross Margin',
+    '保有する全てのPositionで証拠金を共有するモードです。一つのPositionの含み益が、他のPositionの証拠金不足を補うことがあります。',
+    'Isolated Marginとは対照的なモードです。複数のPositionを持つ場合に証拠金を効率的に使えるメリットがある一方、一つのPositionの大きな損失が、他のPositionの証拠金にも影響しうる点には注意が必要です。'],
+  'isolated-margin': ['Isolated Margin',
+    'Positionごとに証拠金を分離するモードです。あるPositionの損失が、他のPositionの証拠金に影響しません。',
+    'Cross Marginとは対照的なモードです。Position単位でリスクを封じ込められるため、特定のPositionだけに絞ってリスクを管理したい場合に向いています。ただし、証拠金の効率という点ではCross Marginに劣ります。'],
+  'tp-sl': ['Take Profit / Stop Loss（TP/SL）',
+    'あらかじめ指定した価格に達した際に、自動的にPositionを決済する注文です。利益確定（TP）と損失限定（SL）の両方に使われます。',
+    '通常のTP/SLは、指定価格に達すると機械的に注文が送信される仕組みで、スリッページや瞬間的な価格変動（ヒゲ）の影響をそのまま受けます。StandXにはこれを発展させたBlock Options（SIP-4）という仕組みもあり、TP/SLを「権利」として扱うことでこうした影響を軽減する選択肢が用意されています。'],
+  'notional': ['Notional（想定元本）',
+    'Positionの大きさを、数量×価格で評価した金額のことです。手数料や証拠金の計算の基準として使われます。',
+    'Notionalはデリバティブ取引全般で使われる一般的な概念で、実際に受け渡しされる金額そのものではなく、計算上の基準となる仮想的な元本を指します。StandXでは手数料や清算手数料の計算に、このNotionalが基準として使われます。'],
+  'withdrawal': ['Withdrawal（引き出し）',
+    'StandX上の資金を、オンチェーンウォレットへ戻す操作のことです。資金の状態によって、完了までにかかる時間が異なる場合があります。',
+    'アイドル状態の資金（運用に回っていない資金）であれば比較的短時間で引き出せますが、Vaultで運用中の資金は、運用状況に応じて引き出しまでに一定の日数がかかることがあります。資金計画を立てる際は、即時に引き出せるとは限らない点を考慮する必要があります。'],
+  'redemption': ['Redemption（DUSDの償還）',
+    'DUSDをUSDTやUSDCなどへ戻す操作のことです。Mintの逆にあたる操作です。',
+    'MintがUSDT/USDCをDUSDに変換する操作であるのに対し、Redemptionはその逆方向の操作です。Redemptionには最低償還量が設定されているほか、ネットワーク手数料などをカバーするための手数料が償還額から差し引かれます。']
+};
+
+// Glossaryページの中身を、termsオブジェクトから自動生成する。
+// 用語を追加・編集する際は、terms辞書を更新するだけでポップアップとGlossary両方に反映される。
+function renderGlossaryList(){
+  const list = document.getElementById('glossary-list');
+  if(!list) return;
+  const entries = Object.entries(terms).sort((a,b)=>a[1][0].localeCompare(b[1][0], 'ja'));
+  list.innerHTML = entries.map(([key, [label, short, detail]])=>{
+    // detailが未設定の語（固有名詞等）はshortのみ表示する
+    const body = detail ? detail : short;
+    return `<div class="glossary-item" id="glossary-item-${key}">
+      <div class="glossary-term">${label}</div>
+      <div class="glossary-desc">${body}</div>
+    </div>`;
+  }).join('');
+}
+
+let currentPopupKey = null;
+
+function showPopup(key){
+  const [t,short] = terms[key];
+  currentPopupKey = key;
+  document.getElementById('popup-term').textContent = t;
+  document.getElementById('popup-desc').textContent = short;
+  document.getElementById('popup-overlay').classList.add('show');
+}
+function hidePopup(){ document.getElementById('popup-overlay').classList.remove('show'); }
+
+// ESCキーでポップアップを閉じる（設計図の必須要件）
+window.addEventListener('keydown', (e)=>{
+  if(e.key === 'Escape'){
+    hidePopup();
+  }
+});
+
+// ポップアップの「詳しく見る →」：Glossaryへ遷移し、該当用語までスクロールして
+// 一時的にハイライトする
+// keyを省略した場合はポップアップ表示中の用語（currentPopupKey）を使う。
+// SIP Libraryなど、ポップアップを経由せず直接特定の用語へリンクしたい場合はkeyを直接渡す。
+function goToGlossary(key){
+  const targetKey = key || currentPopupKey;
+  hidePopup();
+  goPage('glossary');
+  // 固定時間待機ではなく、該当要素がDOMに実際に現れるまでポーリングする。
+  // 端末の描画速度に左右されず、確実にハイライトできるようにするため。
+  let attempts = 0;
+  const maxAttempts = 20; // 最大 20 x 100ms = 2秒まで待つ
+  const tryHighlight = ()=>{
+    const el = document.getElementById('glossary-item-'+targetKey);
+    if(el){
+      el.scrollIntoView({behavior:'smooth', block:'center'});
+      el.classList.remove('highlight');
+      void el.offsetWidth; // アニメーションを再トリガーするための強制リフロー
+      // requestAnimationFrameを挟むことで、WebKit等でclassList.add直後に
+      // アニメーションが反映されない場合への耐性を高める
+      requestAnimationFrame(()=>{
+        requestAnimationFrame(()=>{
+          el.classList.add('highlight');
+        });
+      });
+    } else if(attempts < maxAttempts){
+      attempts++;
+      setTimeout(tryHighlight, 100);
+    } else {
+      console.error('goToGlossary: element not found for key "'+targetKey+'" after '+maxAttempts+' attempts');
+    }
+  };
+  setTimeout(tryHighlight, 100);
+}
+
+// ===== サイドバー: 6テーマを単一データ源として定義 =====
+// 新しいテーマページを追加する際は、この配列にidとラベルを足すだけでよい。
+// 各ページ側は <aside class="sidebar" data-theme="xxx" data-mode="beginner"></aside>
+// という空の器を置くだけで、サイドバーの中身はrenderSidebar()が自動生成する。
+const THEMES = [
+  {id:'dusd', label:'DUSD'},
+  {id:'trading', label:'Trading'},
+  {id:'yield', label:'Yield'},
+  {id:'maker', label:'Maker'},
+  {id:'vault', label:'Vault'},
+  {id:'universal-markets', label:'Universal Markets'}
+];
+
+// 「調べる/深く知る」の4項目。6テーマとは別枠、サイドバー下部に控えめに表示する。
+const UTILITY_LINKS = [
+  {id:'faq', label:'FAQ'},
+  {id:'glossary', label:'Glossary'},
+  {id:'sip-library', label:'SIP Library'},
+  {id:'official-resources', label:'Official Resources'}
+];
+
+// 関連テーマ：本文中で実際に相互参照している内容をもとに、テーマごとに2つ定義する。
+// 例：Vaultは清算フローでTradingのShield Vaultに言及しているため、Tradingを関連テーマとする。
+const RELATED_THEMES = {
+  'dusd': ['trading', 'yield'],
+  'trading': ['dusd', 'vault'],
+  'yield': ['dusd', 'maker'],
+  'maker': ['trading', 'vault'],
+  'vault': ['maker', 'universal-markets'],
+  'universal-markets': ['vault', 'maker']
+};
+
+function themeIndex(themeId){
+  return THEMES.findIndex(t=>t.id===themeId);
+}
+
+function renderSidebar(activeTheme, mode){
+  const modeLabel = mode === 'standard' ? 'Standard — 構造を読む' : 'Beginner — 理解する';
+  const items = THEMES.map((t,i)=>{
+    const pageId = t.id + '-' + mode;
+    const exists = !!document.getElementById('page-'+pageId);
+    const num = (i+1) + '.';
+    if(!exists){
+      return `<li class="sidebar-item disabled"><span class="sidebar-num">${num}</span>${t.label}<span class="soon">準備中</span></li>`;
+    }
+    const activeClass = (t.id === activeTheme) ? ' active' : '';
+    return `<li class="sidebar-item${activeClass}" onclick="goPage('${pageId}')"><span class="sidebar-num">${num}</span>${t.label}</li>`;
+  }).join('');
+
+  const utilityItems = UTILITY_LINKS.map(u=>{
+    const exists = !!document.getElementById('page-'+u.id);
+    const soon = exists ? '' : '<span class="soon">準備中</span>';
+    const onclick = exists ? ` onclick="goPage('${u.id}')"` : '';
+    return `<div class="sidebar-utility-item"${onclick}>${u.label}${soon}</div>`;
+  }).join('');
+
+  return `
+    <div class="sidebar-toggle" onclick="closeSidebar()">✕ 閉じる</div>
+    <div class="sidebar-home" onclick="goHome();">⌂ Home</div>
+    <div class="sidebar-mode"><span class="tick"></span>${modeLabel}</div>
+    <ul class="sidebar-list">${items}</ul>
+    <div class="sidebar-utility">
+      <div class="sidebar-utility-label">調べる / 深く知る</div>
+      ${utilityItems}
+    </div>
+  `;
+}
+
+// 現在アクティブなページ内のサイドバーへ中身を注入する
+function fillActiveSidebar(){
+  const activePage = document.querySelector('.page.active');
+  if(!activePage) return;
+
+  // サイドバーの中身を生成（Homeなどサイドバーを持たないページは対象外）
+  const aside = activePage.querySelector('.sidebar');
+  if(aside){
+    const theme = aside.dataset.theme;
+    const mode = aside.dataset.mode;
+    aside.innerHTML = renderSidebar(theme, mode);
+  }
+
+  // ページバッジにも「何番目/全体」を反映（1 / 6 のように）
+  // サイドバーの有無に関わらず、バッジが存在する限り必ず独立して処理する。
+  const badge = activePage.querySelector('.page-badge');
+  if(badge){
+    const idx = themeIndex(badge.dataset.theme);
+    const modeLabel = badge.dataset.mode === 'standard' ? 'Standard' : 'Beginner';
+    const subLabel = badge.dataset.mode === 'standard' ? '構造を読む' : '理解する';
+    badge.textContent = `● ${modeLabel} · ${idx+1} / ${THEMES.length} — ${subLabel}`;
+  }
+
+  // 関連テーマを生成（RELATED_THEMESで定義した2テーマへのチップリンク）
+  const relatedSlot = activePage.querySelector('.related-themes-slot');
+  if(aside && relatedSlot){
+    const theme = aside.dataset.theme;
+    const mode = aside.dataset.mode;
+    const related = RELATED_THEMES[theme];
+    if(related && related.length){
+      const chips = related.map(relTheme=>{
+        const relThemeObj = THEMES.find(t=>t.id===relTheme);
+        if(!relThemeObj) return '';
+        const relPageId = relTheme + '-' + mode;
+        const exists = !!document.getElementById('page-'+relPageId);
+        if(exists){
+          return `<span class="related-theme-chip" onclick="goPage('${relPageId}')">${relThemeObj.label}</span>`;
+        } else {
+          return `<span class="related-theme-chip disabled">${relThemeObj.label}<span class="soon">準備中</span></span>`;
+        }
+      }).join('');
+      relatedSlot.innerHTML = `
+        <div class="related-themes">
+          <div class="related-themes-label">関連テーマ</div>
+          <div class="related-theme-chips">${chips}</div>
+        </div>`;
+    } else {
+      relatedSlot.innerHTML = '';
+    }
+  }
+
+  // 本文末尾の「次へ」リンクを生成（サイドバーと同じdata-theme/data-modeを利用）
+  const nextSlot = activePage.querySelector('.next-link-slot');
+  if(aside && nextSlot){
+    const theme = aside.dataset.theme;
+    const mode = aside.dataset.mode;
+    const idx = themeIndex(theme);
+    if(idx > -1 && idx < THEMES.length - 1){
+      const nextTheme = THEMES[idx + 1];
+      const nextPageId = nextTheme.id + '-' + mode;
+      const exists = !!document.getElementById('page-'+nextPageId);
+      if(exists){
+        nextSlot.innerHTML = `
+          <div class="next-link" onclick="goPage('${nextPageId}')">
+            <div>
+              <div class="next-link-eyebrow">次へ</div>
+              <div class="next-link-title">${nextTheme.label}</div>
+            </div>
+            <div class="next-link-arrow">→</div>
+          </div>`;
+      } else {
+        nextSlot.innerHTML = `
+          <div class="next-link disabled">
+            <div>
+              <div class="next-link-eyebrow">次へ（準備中）</div>
+              <div class="next-link-title">${nextTheme.label}</div>
+            </div>
+            <div class="next-link-arrow">→</div>
+          </div>`;
+      }
+    } else {
+      // 最後のテーマ（Universal Markets）には「次へ」を出さない
+      nextSlot.innerHTML = '';
+    }
+  }
+}
+
+// 全.page要素に、IDの末尾（-beginner/-standard）からdata-mode属性を自動付与する。
+// これにより新しいページを追加する際、HTML側でdata-modeを書き忘れても
+// アクセントカラー（--accent）の切り替えが自動的に機能する。
+function initPageModes(){
+  document.querySelectorAll('.page').forEach(p=>{
+    if(p.id.endsWith('-standard')){
+      p.setAttribute('data-mode', 'standard');
+    } else if(p.id.endsWith('-beginner')){
+      p.setAttribute('data-mode', 'beginner');
+    }
+  });
+}
+initPageModes();
+
+// ページごとのスクロール位置を記憶するマップ
+const scrollMemory = {};
+
+// ===== History API 利用可否の検知 =====
+// Claudeのプレビュー（sandbox化されたiframe、origin='null'）等では
+// history.pushState/replaceStateが例外を投げて使えないことがある。
+// その場合、URLとの同期は諦め、メモリ上の独自スタックで「戻る」を再現する。
+let historyAvailable = true;
+try{
+  history.replaceState({page:'home'}, '', '#/home');
+}catch(e){
+  historyAvailable = false;
+  console.warn('History API is unavailable in this environment (likely a sandboxed preview). Falling back to in-memory navigation stack.');
+}
+// 履歴が使えない環境向けの手動ナビゲーションスタック（常に維持しておき、
+// 途中で使えなくなった場合にもすぐ切り替えられるようにする）
+const navStack = ['home'];
+
+function renderPage(id, push){
+  // 離脱するページのスクロール位置を記憶しておく
+  const leavingPage = document.querySelector('.page.active');
+  if(leavingPage){
+    scrollMemory[leavingPage.id] = window.scrollY;
+  }
+
+  const targetPage = document.getElementById('page-'+id);
+  if(!targetPage){
+    // 万一存在しないページIDが渡された場合、無音で失敗させず必ずHomeへ逃がす
+    console.error('renderPage: unknown page id "'+id+'", falling back to home');
+    if(id !== 'home'){ renderPage('home', push); }
+    return;
+  }
+
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  targetPage.classList.add('active');
+
+  if(push!==false){
+    // 新規の遷移（戻る操作ではない）：常に先頭から表示
+    window.scrollTo(0,0);
+    if(historyAvailable){
+      try{
+        history.pushState({page:id}, '', '#/'+id);
+      }catch(e){
+        // 途中で使えなくなった場合も、その場でフォールバックへ切り替える
+        historyAvailable = false;
+        console.warn('history.pushState failed mid-session, switching to in-memory navigation:', e);
+      }
+    }
+    if(!historyAvailable){
+      navStack.push(id);
+    }
+  } else {
+    // 戻る/進む操作：このページに以前いた時のスクロール位置を復元（未訪問なら先頭）
+    const restoreY = scrollMemory['page-'+id] || 0;
+    window.scrollTo(0, restoreY);
+  }
+
+  // サイドバー・バッジ・ヘッダートグルは表示に必須の情報なので必ず先に確定させる。
+  // 装飾的な図形アニメーション（animateDiagrams）は最後にし、
+  // 万一そちらが失敗しても必須情報の表示には影響しないようにする。
+  // 各処理はtry-catchで独立させ、一つの失敗が他へ連鎖しないようにする。
+  try{ fillActiveSidebar(); }
+  catch(e){ console.error('fillActiveSidebar failed:', e); }
+
+  try{ updateHeaderModeToggle(id); }
+  catch(e){ console.error('updateHeaderModeToggle failed:', e); }
+
+  try{ updateFabVisibility(); }
+  catch(e){ console.error('updateFabVisibility failed:', e); }
+
+  if(id === 'glossary'){
+    try{ renderGlossaryList(); }
+    catch(e){ console.error('renderGlossaryList failed:', e); }
+  }
+
+  try{ animateDiagrams(); }
+  catch(e){ console.error('animateDiagrams failed:', e); }
+}
+function goPage(id){ renderPage(id, true); }
+function goHome(){ renderPage('home', true); }
+
+// テーマページ滞在時だけヘッダーのBeginner/Standardトグルを表示し、
+// 現在のモードに応じてハイライトを同期する
+function updateHeaderModeToggle(id){
+  const toggle = document.getElementById('header-mode-toggle');
+  toggle.classList.add('show');
+  let mode;
+  const activePage = document.getElementById('page-'+id);
+  const aside = activePage ? activePage.querySelector('.sidebar') : null;
+  if(aside && aside.dataset.theme === ''){
+    // Home・FAQなど「テーマ」を持たない中立ページでは、
+    // そのページ自身のサイドバーのdata-modeを真実の情報源にする
+    mode = (aside.dataset.mode === 'standard') ? 'standard' : 'beginner';
+  } else {
+    mode = id.endsWith('-standard') ? 'standard' : 'beginner';
+  }
+  document.getElementById('header-mode-beginner').classList.toggle('active', mode==='beginner');
+  document.getElementById('header-mode-standard').classList.toggle('active', mode==='standard');
+}
+
+// ヘッダーのBeginner/Standard切替：同じテーマのもう一方のページへ
+// （Standard版が未実装のテーマは準備中として扱う）
+function switchMode(mode){
+  const activePage = document.querySelector('.page.active');
+  const current = activePage.id.replace('page-','');
+  const aside = activePage.querySelector('.sidebar');
+
+  // Home・FAQなど「テーマ」を持たない中立ページでは、ページ遷移はせず
+  // サイドバーが指すモードだけを切り替える（data-themeが空であることで判定する）
+  if(aside && aside.dataset.theme === ''){
+    aside.dataset.mode = mode;
+    // --accent（緑/赤の切り替え）はpage要素のdata-mode属性を見て決まるため、
+    // こちらにも反映しないと色が切り替わらない
+    activePage.dataset.mode = mode;
+    try{ fillActiveSidebar(); }
+    catch(e){ console.error('fillActiveSidebar failed:', e); }
+    updateHeaderModeToggle(current);
+    return;
+  }
+
+  const theme = current.replace('-beginner','').replace('-standard','');
+  const targetId = theme + '-' + mode;
+  if(document.getElementById('page-'+targetId)){
+    goPage(targetId);
+  } else {
+    document.getElementById('header-mode-beginner').classList.toggle('active', mode==='beginner');
+    document.getElementById('header-mode-standard').classList.toggle('active', mode==='standard');
+    alert('Standard版のこのテーマは準備中です（モックアップの範囲外）');
+    updateHeaderModeToggle(current);
+  }
+}
+
+// ブラウザの戻る/進むボタンにも対応（History APIが使える環境のみ意味を持つ）
+window.addEventListener('popstate', (e)=>{
+  if(!historyAvailable) return; // フォールバック中はpopstateを無視（goBackが独自スタックを使う）
+  const id = (e.state && e.state.page) ? e.state.page : 'home';
+  renderPage(id, false);
+});
+
+// Guide内「← 戻る」：
+// History APIが使える環境ではブラウザ履歴を1つ戻す。
+// 使えない環境（Claudeのプレビュー等）では、独自スタックで1つ前のページへ戻る。
+function goBack(){
+  if(historyAvailable){
+    try{
+      if(history.state){
+        history.back();
+        return;
+      }
+    }catch(e){
+      historyAvailable = false;
+      console.warn('history.back failed, switching to in-memory navigation:', e);
+    }
+  }
+  // フォールバック：独自スタックを1つ戻す
+  if(navStack.length > 1){
+    navStack.pop(); // 現在地を取り除く
+    const prev = navStack[navStack.length - 1];
+    renderPage(prev, false);
+  } else {
+    goHome();
+  }
+}
+
+fillActiveSidebar();
+updateFabVisibility();
+updateHeaderModeToggle('home');
+function toggleTheme(){
+  const html = document.documentElement;
+  const cur = html.getAttribute('data-theme');
+  html.setAttribute('data-theme', cur==='light' ? 'dark' : 'light');
+}
+function animateDiagrams(){
+  const activePage = document.querySelector('.page.active');
+  if(!activePage) return;
+
+  // 要素にclassを付け外しするヘルパー。classListが何らかの理由で
+  // 使えない/失敗する環境でも、直接styleを操作して見た目だけは成立させる。
+  function safeToggleIn(el, on){
+    try{
+      el.classList.toggle('in', on);
+    }catch(e){
+      // フォールバック：classListが使えない場合は直接スタイルを当てる
+      if(on){
+        el.style.opacity = '1';
+        el.style.transform = 'none';
+      } else {
+        el.style.opacity = '0';
+      }
+    }
+  }
+
+  // Flow Steps：ステップを順番にフェードインさせる
+  try{
+    const steps = activePage.querySelectorAll('.flow-step');
+    steps.forEach(el=>safeToggleIn(el, false));
+    steps.forEach((el,i)=>{
+      setTimeout(()=>{ safeToggleIn(el, true); }, 120 * i);
+    });
+  }catch(e){ console.error('Flow Steps animation failed:', e); }
+
+  // Path Rows：対等な経路を上から順にフェードインさせる（優劣ではなく描画順の演出）
+  try{
+    const pathRows = activePage.querySelectorAll('.path-row');
+    pathRows.forEach(el=>safeToggleIn(el, false));
+    pathRows.forEach((el,i)=>{
+      setTimeout(()=>{ safeToggleIn(el, true); }, 120 * i);
+    });
+  }catch(e){ console.error('Path Rows animation failed:', e); }
+
+  // Category Cards：対等な分類を同時に近いタイミングでフェードインさせる（優劣を作らない）
+  try{
+    const catCards = activePage.querySelectorAll('.catcard');
+    catCards.forEach(el=>safeToggleIn(el, false));
+    catCards.forEach((el,i)=>{
+      setTimeout(()=>{ safeToggleIn(el, true); }, 80 * i);
+    });
+  }catch(e){ console.error('Category Cards animation failed:', e); }
+
+  // Hub Graph：中心→線→周辺ノードの順にフェードインさせる（優劣ではなく描画順の演出）
+  try{
+    const hub = activePage.querySelector('.hub-svg');
+    if(hub){
+      const lines = hub.querySelectorAll('.hub-line');
+      const nodes = hub.querySelectorAll('.hub-node');
+      lines.forEach(el=>safeToggleIn(el, false));
+      nodes.forEach(el=>safeToggleIn(el, false));
+      const center = hub.querySelector('.hub-node[data-idx="3"]');
+      if(center) setTimeout(()=>safeToggleIn(center, true), 0);
+      lines.forEach((el,i)=>{
+        setTimeout(()=>safeToggleIn(el, true), 150 + i*100);
+      });
+      nodes.forEach(el=>{
+        if(el.dataset.idx === '3') return;
+        const i = parseInt(el.dataset.idx, 10);
+        setTimeout(()=>safeToggleIn(el, true), 250 + i*100);
+      });
+    }
+  }catch(e){ console.error('Hub Graph animation failed:', e); }
+}
+
+function openSidebar(){
+  const aside = document.querySelector('.page.active .sidebar');
+  if(aside) aside.classList.add('open');
+  document.getElementById('sidebar-scrim').classList.add('show');
+  document.getElementById('fab-menu').classList.add('hide-while-open');
+  document.getElementById('fab-back').classList.add('hide-while-open');
+}
+function closeSidebar(){
+  document.querySelectorAll('.sidebar').forEach(el=>el.classList.remove('open'));
+  document.getElementById('sidebar-scrim').classList.remove('show');
+  updateFabVisibility();
+}
+
+// フローティングメニューボタン・戻るボタンは、サイドバーを持つページ（テーマページ）でのみ表示する。
+// Homeなどサイドバーが存在しないページでは非表示にする。
+function updateFabVisibility(){
+  const fab = document.getElementById('fab-menu');
+  const fabBack = document.getElementById('fab-back');
+  const hasSidebar = !!document.querySelector('.page.active .sidebar');
+  fab.style.display = hasSidebar ? '' : 'none';
+  fab.classList.remove('hide-while-open');
+  fabBack.style.display = hasSidebar ? '' : 'none';
+  fabBack.classList.remove('hide-while-open');
+}
+</script>
+
+</body>
+</html>
