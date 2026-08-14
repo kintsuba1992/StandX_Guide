@@ -1587,8 +1587,8 @@
           </div>
         </div>
 
-        <h2>Reward Vaultが生み出す市場成長の循環</h2>
-        <p>Reward Vaultは、SponsorやコミュニティがFundできる仕組みです。一度配ったら終わりではなく、市場が育つ好循環を生み出すことを目的として設計されています。</p>
+        <h2>Reward Vaultは支出されることを前提に設計されている</h2>
+        <p>Reward Vaultは、SponsorやコミュニティがFundできる仕組みです。ただし「一度配ったら終わり」ではないものの、Vault自体の残高は<span class="term" onclick="showPopup('stand-mode')">Stand Mode</span>を有効にしていない限り自動的には増えません。日々Makerへ支出される予算であるため、通常はその分だけ残高が減っていきます。</p>
 
         <div class="flowsteps">
           <div class="flowsteps-title">Reward Vaultが生み出す循環</div>
@@ -1596,7 +1596,7 @@
             <div class="flow-step">
               <div class="flow-num">1</div>
               <div class="flow-label">Reward Budget</div>
-              <div class="flow-desc">Makerへの原資となる</div>
+              <div class="flow-desc">Makerへ支出され、残高は減っていく</div>
             </div>
             <div class="flow-arrow">→</div>
             <div class="flow-step">
@@ -1613,10 +1613,15 @@
             <div class="flow-arrow">→</div>
             <div class="flow-step">
               <div class="flow-num">4</div>
-              <div class="flow-label">Fee収益の増加</div>
-              <div class="flow-desc">SponsorがReward Vaultへ再びFundする動機になる</div>
+              <div class="flow-label">手数料シェアがSponsorへ</div>
+              <div class="flow-desc">Stand Modeが有効ならReward Vaultへ再循環</div>
             </div>
           </div>
+        </div>
+
+        <div class="official-box">
+          <span>Stand Modeを有効にしない場合、手数料シェアはSponsorに帰属し、Reward Vaultへ自動的には戻りません。</span>
+          <a href="https://docs.standx.com/sip/sip-5b-community-vault" target="_blank" rel="noopener">公式Docsで確認 ↗</a>
         </div>
 
         <div class="official-box">
@@ -1654,7 +1659,7 @@
 
       <div class="content" style="padding-top:32px;">
         <h2>Universal Marketsとは？</h2>
-        <p><span class="term" onclick="showPopup('sponsor')">Sponsor</span>が、公開されたルールに従って市場を作り、育てていくための仕組みです。<span class="term" onclick="showPopup('permissionless')">Permissionless</span>（許可不要）でありながら、ルールに基づいて運営されます。</p>
+        <p><span class="term" onclick="showPopup('sponsor')">Sponsor</span>が、公開されたルールに従って市場を作り、育てていくための仕組みです。<span class="term" onclick="showPopup('permissionless')">Permissionless</span>（許可不要）でありながら、ルールに基づいて運営されます。ただし、これは目指している設計思想であり、完全に自動化された市場開設プロセスは現時点でまだ全て定義されているわけではありません。</p>
 
         <div class="flowsteps">
           <div class="flowsteps-title">市場ができるまで</div>
@@ -1900,7 +1905,7 @@
         </div>
         <div class="faq-card">
           <div class="faq-q"><span class="faq-q-mark">Q.</span>Positionをすぐに閉じるとYieldは減りますか？</div>
-          <div class="faq-a">Position Yieldはサイズと保有時間を組み合わせて評価する仕組みのため、短期間で開いては閉じる取引を繰り返しても対象になりにくい設計です。</div>
+          <div class="faq-a">Position Yieldはサイズと保有時間を組み合わせて評価する仕組みです。短期間の悪用を防ぐため、少なくとも1回の完全なFundingサイクルを経たPositionのみが対象になります。1つのFunding間隔内で開いて閉じたPositionは対象外です。</div>
         </div>
 
         <div class="faq-group-label">Maker</div>
@@ -1934,7 +1939,7 @@
         <div class="faq-group-label">Universal Markets</div>
         <div class="faq-card">
           <div class="faq-q"><span class="faq-q-mark">Q.</span>本当に誰でも市場を作れるのですか？</div>
-          <div class="faq-a">はい、事前の許可は必要ありません。ただし「何をしてもよい」という意味ではなく、オラクルや清算などのルールに従う必要があります。Trading Gateという関門を通過するまで、市場は実際には稼働しません。</div>
+          <div class="faq-a">Permissionlessであることは目指している設計思想です。「何をしてもよい」という意味ではなく、オラクルや清算などのルールに従う必要があり、Trading Gateという関門を通過するまで市場は実際には稼働しません。なお、完全に自動化された市場開設プロセス自体は、現時点でまだ全て定義されているわけではありません。</div>
         </div>
         <div class="faq-card">
           <div class="faq-q"><span class="faq-q-mark">Q.</span>自分で市場を作るには何が必要ですか？</div>
@@ -2287,7 +2292,7 @@ const terms = {
     'Marginが維持基準を下回っても、即座にADLが発動するわけではありません。まずOrder Bookでの通常の清算処理が試みられ、それでも処理しきれない分はShield Vaultが吸収します。ADLはこの2段階を経てもなお不足した場合にのみ発動します。他の健全なポジション保有者（多くの場合、含み益の大きい高レバレッジのポジション）を巻き込んで強制的に決済させる仕組みであるため、最後の手段として位置づけられています。'],
   'position-yield-layer': ['SIP-2（Position Yield）',
     'SIP-2により導入された、Positionのサイズと保有時間を評価するYield層です。',
-    'この提案が導入された背景には、「取引量」だけを評価する設計では、市場に参加し続けること自体の価値が見過ごされる、という課題がありました。公式の説明では「より大きなPositionをより長く保有するほどYieldが増える」とされており、単なる保有時間だけでなくPositionのサイズも組み合わさって評価されます。開設経路（通常のOrder Book経由かBlock Trade経由か）を問わず、成立したPositionであれば同じ枠組みで評価対象になります。'],
+    'この提案が導入された背景には、「取引量」だけを評価する設計では、市場に参加し続けること自体の価値が見過ごされる、という課題がありました。公式の説明では「より大きなPositionをより長く保有するほどYieldが増える」とされており、単なる保有時間だけでなくPositionのサイズも組み合わさって評価されます。開設経路（通常のOrder Book経由かBlock Trade経由か）を問わず、成立したPositionであれば同じ枠組みで評価対象になります。ただし、短期間の悪用を防ぐため、少なくとも1回の完全なFundingサイクルを経たPositionのみが対象です。'],
   'dusd-yield-layer': ['SIP-3（DUSD Yield）',
     'SIP-3により拡張された、DUSDの保有量を評価するYield層です。',
     'SIP-3が導入される以前、DUSDのYieldは原資産のステーキング収益とShort PerpetualのFundingという、StandXの基礎運用にのみ由来していました。この提案により、Perpsの取引手数料の一部もこの層に還流するようになり、DUSDのYieldが取引活動そのものからも生まれる循環構造が生まれました。DUSDを保有しているだけで対象になり、Perpsでの証拠金としての利用中も継続して評価されます。'],
@@ -2318,6 +2323,9 @@ const terms = {
   'shield-vault': ['Shield Vault',
     'Liquidationで生じうる損失を吸収するための保険資本です。清算の段階的な防御構造の一部を担っています。',
     'Tradingで見た清算の段階（Order Book→Vault→ADL）の「Vault」は、まさにこのShield Vaultのことです。市場ごとに用意されており、新しい市場が稼働するにはSponsorによる最低限の拠出でこのVaultを充足させる必要があります。'],
+  'stand-mode': ['Stand Mode',
+    'Sponsorが受け取る手数料シェアを、自動的にReward Vaultへ再び投入する設定のことです。',
+    'Reward Vaultは、Makerへ日々支出される予算であるため、放っておくと残高が減っていくだけの仕組みです。Stand Modeを有効にすると、市場の成長によってSponsorへ流れる手数料シェアが、自動的にReward Vaultへ再循環するようになります。Stand Modeを有効にしない場合、手数料シェアはSponsorの手元に残り、Reward Vaultへは自動的に戻りません。'],
   'dusd': ['DUSD',
     'StandXが発行するYield-bearing Stablecoinです。Perpsの証拠金として使われるほか、保有しているだけでYieldが発生します。',
     'DUSDはBNB ChainとSolanaの両方で発行・利用できます。裏付けにはデルタニュートラルな設計（原資産の現物＋Short Perpetual）が使われており、Yieldは原資産のステーキング収益・Short PerpetualのFunding収益・Perps取引手数料の還流（SIP-3）という複数の源泉から生まれます。'],
@@ -2340,8 +2348,8 @@ const terms = {
     'Makerへの報酬の原資として使われるVaultです。市場が育つほど、この資本も育つ設計になっています。',
     'Reward Budget（原資）→Makerの増加→Order Bookの厚みの向上→Traderの増加→取引量の増加→手数料収益の増加→Reward Vaultへの再投入、という循環で設計されています。単なる報酬プールではなく、市場成長のための循環装置として機能します。'],
   'universal-markets': ['SIP-5（Universal Markets）',
-    'Sponsorが公開されたルールに従って市場を作り、育てていくための仕組みです。誰でも市場を作れますが、ルールが無いわけではありません。',
-    'SIP-5は現時点でWIP（実装進行中）のステータスにあり、複数フェーズに分けて段階的に実装される提案です。Maker Yield（SIP-5A）とCommunity Vaults（SIP-5B）はすでに実装済みの子フェーズで、次のフェーズ（SIP-5C）はまだ詳細が公開されていません。市場はReward Vault（流動性インセンティブ）・Oracle Grid（価格参照方式）・Shield Vault（リスク吸収）という3つの要素に支えられています。独立した別のリスクエンジンを持つわけではなく、StandX Perps全体に共通するMargin・Liquidation・ADLという基盤の上に、市場ごとのShieldが上乗せされる構造です。'],
+    'Sponsorが公開されたルールに従って市場を作り、育てていくための仕組みです。誰でも市場を作れることを目指す設計思想ですが、ルールが無いわけではありません。',
+    'SIP-5は現時点でWIP（実装進行中）のステータスにあり、複数フェーズに分けて段階的に実装される提案です。Maker Yield（SIP-5A）とCommunity Vaults（SIP-5B）はすでに実装済みの子フェーズですが、公式SIP-5Bでも「完全なpermissionless市場開設プロセス・Sponsorのステーキング・Oracle Gridの詳細は、SIP-5本体および後続フェーズが定める」と明記されており、現時点で全てが自動化されているわけではありません。市場はReward Vault（流動性インセンティブ）・Oracle Grid（価格参照方式）・Shield Vault（リスク吸収）という3つの要素に支えられています。独立した別のリスクエンジンを持つわけではなく、StandX Perps全体に共通するMargin・Liquidation・ADLという基盤の上に、市場ごとのShieldが上乗せされる構造です。'],
   'sip-5c': ['SIP-5C（次フェーズ）',
     'SIP-5（Universal Markets）の次の実装フェーズとして提案段階（Draft）にあるものです。詳細はまだ公式に公開されていません。',
     'SIP-5A（Community Maker Yield）・SIP-5B（Community Vaults）に続く、SIP-5の3番目の子フェーズです。公式Docs上でも具体的な名称・仕様はまだ明かされておらず、現時点でGuideとしてお伝えできる確定情報はありません。動く情報のため、最新状況は公式Docsでご確認ください。'],
