@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="ja">
+<html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -16,6 +16,7 @@
 <meta property="og:description" content="StandXの仕組みを、迷わず理解する。非公式のコミュニティ制作ガイドです。">
 <meta property="og:url" content="https://kintsuba1992.github.io/StandX_Guide/">
 <meta property="og:image" content="https://kintsuba1992.github.io/StandX_Guide/StandX_Guide.png">
+<meta property="og:image:type" content="image/png">
 <meta property="og:site_name" content="StandX Guide">
 
 <meta name="twitter:card" content="summary_large_image">
@@ -691,6 +692,8 @@
     color:var(--text-dim); font-size:12px; font-family:var(--font-display);
     display:flex; justify-content:space-between; flex-wrap:wrap; gap:8px;
   }
+  footer a{color:var(--text-dim); text-decoration:none;}
+  footer a:hover{color:var(--accent); text-decoration:underline;}
 
   /* ===== Back button ===== */
   .back-btn{
@@ -860,7 +863,7 @@
       </div>
       <select class="lang-select" onchange="changeLanguage(this.value)">
         <option value="ja">日本語</option>
-        <option value="en">English</option>
+        <option value="en" selected>English</option>
         <option value="zh">简体中文</option>
         <option value="ko">한국어</option>
         <option value="vi">Tiếng Việt</option>
@@ -2338,7 +2341,11 @@
 
 <footer>
   <span>StandX Guide — <span data-i18n="footer-unofficial">非公式ガイド</span></span>
-  <span>Official Docs ↗ · X ↗ · Discord ↗</span>
+  <span>
+    <a href="https://docs.standx.com/" target="_blank" rel="noopener">Official Docs ↗</a> ·
+    <a href="https://x.com/standx_official" target="_blank" rel="noopener">X ↗</a> ·
+    <a href="https://discord.gg/standx" target="_blank" rel="noopener">Discord ↗</a>
+  </span>
 </footer>
 
 <script>
@@ -2347,7 +2354,7 @@
 // ここに定義するのは、それらを繋ぐ「説明文・UI文言」のみ。
 // 各言語の言い回しは、その言語の実際の慣用表現を個別に確認して追加すること
 // （例：「ロスカット」を直訳しない、というルールと同じ考え方）。
-let currentLang = 'ja';
+let currentLang = 'en'; // サイトのデフォルト言語。言語セレクタの初期選択状態と一致させること。
 
 const translations = {
   ja: {
@@ -4272,6 +4279,7 @@ function applyTranslations(){
 // 動的生成文言（JSで組み立てているため別途更新が必要）の両方を再適用する。
 function changeLanguage(lang){
   currentLang = lang;
+  document.documentElement.lang = lang; // アクセシビリティ/SEOのため、html要素のlang属性も同期する
   applyTranslations();
   try{ fillActiveSidebar(); }
   catch(e){ console.error('fillActiveSidebar failed during language change:', e); }
@@ -4460,7 +4468,7 @@ const terms = {
 const termsEn = {
   'yield-bearing': ['Yield-bearing Stablecoin',
     'A stablecoin that not only keeps its price stable, but also automatically generates Yield simply by being held.',
-    'A typical stablecoin aims only to "keep its price at $1." A Yield-bearing Stablecoin combines that with a "grows just by holding it" earning feature. StandX\'s DUSD is exactly this — no additional steps like staking are needed. It applies whether you leave it in your wallet or use it as margin for Perps.'],
+    'A typical stablecoin aims only to "keep its price at $1." A Yield-bearing Stablecoin adds an earning feature on top of that — its value grows simply from being held. StandX\'s DUSD is exactly this — no additional steps like staking are needed. It applies whether you leave it in your wallet or use it as margin for Perps.'],
   'yield': ['Yield',
     'Ongoing earnings you receive based on actions such as holding DUSD or holding a Position.',
     'StandX\'s Yield isn\'t a single thing — it\'s split into three layers: DUSD Yield, Position Yield, and Maker Yield. Each evaluates something different (amount held, holding duration, liquidity contributed), and all three are distributed from a shared pool of Trading Fees.'],
@@ -4480,7 +4488,7 @@ const termsEn = {
     'The moment an Order is actually filled and becomes a Position.',
     'Execution happens when a buy order and a sell order meet the conditions to match. A single order can also be filled in multiple partial fills, so it doesn\'t always match its full size in one go. Because StandX uses a fully on-chain Order Book, the entire process — including Execution — is verifiable on the blockchain.'],
   'position': ['Position',
-    'A held Long or Short stake. Its profit and loss fluctuates in relation to Margin.',
+    'An open Long or Short position that you\'re currently holding. Its profit and loss fluctuates in relation to Margin.',
     'While holding a Position, unrealized profit and loss (PnL) accrues along with price movement, and Funding is continuously paid or received. Holding a Position for a period of time is itself something Position Yield evaluates — it means more than simply "holding."'],
   'funding': ['Funding',
     'A payment periodically exchanged between Longs and Shorts. It is not a fee collected by StandX.',
@@ -5178,7 +5186,7 @@ const termsTr = {
     'Long ve Short arasında periyodik olarak değiş tokuş edilen bir ödeme. StandX tarafından alınan bir ücret değildir.',
     'Funding, Perpetual Futures\'ın fiyatını spot fiyata yakın tutan bir mekanizmadır. StandX tarafından kâr olarak alınmaz — doğrudan Long ve Short pozisyon tutan trader\'lar arasında değiş tokuş edilir. Ayrıca DUSD\'nin Yield kaynaklarından biriyle de ilişkilidir (Short Perpetual tutmaktan gelen Funding geliri).'],
   'liquidation': ['Zorunlu Tasfiye (Liquidation)',
-    'Margin, sürdürme eşiğinin altına düştüğünde bir Position\'ın zorla kapatılması. "Zararı durdurma" olarak da bilinir.',
+    'Margin, sürdürme eşiğinin altına düştüğünde bir Position\'ın zorla kapatılması. Günlük kullanımda genellikle kısaca "likidasyon" olarak da adlandırılır (Stop Loss ile karıştırılmamalıdır — bu farklı bir kavramdır).',
     'Sürdürme eşiğinin altına düşüldüğü anda hemen tasfiye edilmez — Order Book → Shield Vault → ADL şeklinde aşamalı bir savunma yapısı vardır. Bu aşamalı yapı, platformun genel ödeme gücünü korurken son çare olan ADL\'yi mümkün olduğunca önlemek için tasarlanmıştır.'],
   'dusd-holding': ['DUSD Tutmak',
     'DUSD\'yi cüzdanda veya Perps marjı olarak tutma durumu.',
