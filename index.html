@@ -4,6 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>StandX Guide</title>
+<meta name="description" content="StandXの仕組みを、迷わず理解する。非公式のコミュニティ制作ガイドです。">
 
 <!-- ===== OGP（URLを貼った際のサムネイル表示用） =====
      デプロイ先: https://kintsuba1992.github.io/StandX_Guide/
@@ -12,6 +13,7 @@
      GitHub Pages上のURLとしてアクセス可能になって初めて機能する）。 -->
 <meta property="og:type" content="website">
 <meta property="og:title" content="StandX Guide">
+<meta property="og:description" content="StandXの仕組みを、迷わず理解する。非公式のコミュニティ制作ガイドです。">
 <meta property="og:url" content="https://kintsuba1992.github.io/StandX_Guide/">
 <meta property="og:image" content="https://kintsuba1992.github.io/StandX_Guide/StandX_Guide.png">
 <meta property="og:image:type" content="image/png">
@@ -19,6 +21,7 @@
 
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="StandX Guide">
+<meta name="twitter:description" content="StandXの仕組みを、迷わず理解する。非公式のコミュニティ制作ガイドです。">
 <meta name="twitter:image" content="https://kintsuba1992.github.io/StandX_Guide/StandX_Guide.png">
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -1326,7 +1329,7 @@
         </div>
 
         <h2 data-i18n="yield-b-h2-2">特別な操作は必要？</h2>
-        <p data-i18n="yield-b-p-2">いずれも<span class="term" onclick="showPopup('staking-free')">ステーキングのような追加操作</span>は不要です。DUSDを保有する、あるいはPositionを持つという行動そのものが対象になります。</p>
+        <p data-i18n="yield-b-p-2">いずれも<span class="term" onclick="showPopup('staking-free')">ステーキングのような追加操作</span>は不要です。DUSDを保有する、あるいはPositionを持つことが基本的な対象条件です（Positionについては保有時間などの条件も関わります。詳しくはStandardをご覧ください）。</p>
 
         <div class="official-box">
           <span data-i18n="yield-b-official">現在のYield条件・料率・対象範囲は変更される可能性があります。</span>
@@ -2463,7 +2466,7 @@ const translations = {
     'yield-b-path2': 'Positionを保有する',
     'yield-b-path3': 'Liquidityを提供する',
     'yield-b-h2-2': '特別な操作は必要？',
-    'yield-b-p-2': 'いずれも<span class="term" onclick="showPopup(\'staking-free\')">ステーキングのような追加操作</span>は不要です。DUSDを保有する、あるいはPositionを持つという行動そのものが対象になります。',
+    'yield-b-p-2': 'いずれも<span class="term" onclick="showPopup(\'staking-free\')">ステーキングのような追加操作</span>は不要です。DUSDを保有する、あるいはPositionを持つことが基本的な対象条件です（Positionについては保有時間などの条件も関わります。詳しくはStandardをご覧ください）。',
     'yield-b-official': '現在のYield条件・料率・対象範囲は変更される可能性があります。',
     // --- Yield Standard ---
     'yield-s-lead': '3つのYieldは、共通の手数料収益からどう分配されているのか。それぞれの評価軸の違いを理解します。',
@@ -2779,7 +2782,7 @@ const translations = {
     'yield-b-path2': 'Hold a Position',
     'yield-b-path3': 'Provide Liquidity',
     'yield-b-h2-2': 'Do I need to do anything special?',
-    'yield-b-p-2': 'None of these require <span class="term" onclick="showPopup(\'staking-free\')">extra steps like staking</span>. Simply holding DUSD, or holding a Position, is what counts.',
+    'yield-b-p-2': 'None of these require <span class="term" onclick="showPopup(\'staking-free\')">extra steps like staking</span>. Holding DUSD, or holding a Position, is the basic condition for eligibility (for Positions, factors like holding duration also apply — see Standard for details).',
     'yield-b-official': 'Current Yield conditions, rates, and eligibility may change over time.',
     // --- Yield Standard ---
     'yield-s-lead': 'Understand how the three Yields are distributed from a shared pool of fee revenue, and how each one\'s evaluation criteria differ.',
@@ -3095,7 +3098,7 @@ const translations = {
     'yield-b-path2': '持有 Position',
     'yield-b-path3': '提供 Liquidity',
     'yield-b-h2-2': '需要特别的操作吗？',
-    'yield-b-p-2': '这些都不需要<span class="term" onclick="showPopup(\'staking-free\')">质押等额外操作</span>。只需持有 DUSD，或持有 Position，即可成为评估对象。',
+    'yield-b-p-2': '这些都不需要<span class="term" onclick="showPopup(\'staking-free\')">质押等额外操作</span>。持有 DUSD，或持有 Position，是基本的评估条件（Position 还涉及持仓时间等条件，详情请参阅 Standard）。',
     'yield-b-official': '当前的 Yield 条件、利率及适用范围可能会有所变动。',
     // --- Yield Standard ---
     'yield-s-lead': '理解这三种 Yield 是如何从共同的手续费收入中分配的，以及各自的评估标准有何不同。',
@@ -3411,7 +3414,7 @@ const translations = {
     'yield-b-path2': 'Position을 보유한다',
     'yield-b-path3': 'Liquidity를 제공한다',
     'yield-b-h2-2': '특별한 조작이 필요한가?',
-    'yield-b-p-2': '어느 쪽도 <span class="term" onclick="showPopup(\'staking-free\')">스테이킹 같은 추가 조작</span>은 필요하지 않습니다. DUSD를 보유하거나 Position을 갖는 행위 자체가 대상이 됩니다.',
+    'yield-b-p-2': '어느 쪽도 <span class="term" onclick="showPopup(\'staking-free\')">스테이킹 같은 추가 조작</span>은 필요하지 않습니다. DUSD를 보유하거나 Position을 갖는 것이 기본적인 대상 조건입니다（Position의 경우 보유 시간 등의 조건도 관련됩니다. 자세한 내용은 Standard를 참조하세요）.',
     'yield-b-official': '현재의 Yield 조건・이율・대상 범위는 변경될 수 있습니다.',
     // --- Yield Standard ---
     'yield-s-lead': '세 가지 Yield가 공통의 수수료 수익에서 어떻게 분배되는지, 각각의 평가 기준의 차이를 이해합니다.',
@@ -3727,7 +3730,7 @@ const translations = {
     'yield-b-path2': 'Nắm giữ Position',
     'yield-b-path3': 'Cung cấp Liquidity',
     'yield-b-h2-2': 'Tôi có cần làm gì đặc biệt không?',
-    'yield-b-p-2': 'Không có cái nào yêu cầu <span class="term" onclick="showPopup(\'staking-free\')">bước bổ sung như staking</span>. Chỉ cần nắm giữ DUSD, hoặc nắm giữ Position, là đủ tính.',
+    'yield-b-p-2': 'Không có cái nào yêu cầu <span class="term" onclick="showPopup(\'staking-free\')">bước bổ sung như staking</span>. Nắm giữ DUSD, hoặc nắm giữ Position, là điều kiện cơ bản để đủ tính (đối với Position, các yếu tố như thời gian nắm giữ cũng liên quan — xem Standard để biết chi tiết).',
     'yield-b-official': 'Điều kiện, lãi suất và tiêu chuẩn đủ điều kiện của Yield hiện tại có thể thay đổi theo thời gian.',
     // --- Yield Standard ---
     'yield-s-lead': 'Hiểu cách ba loại Yield được phân phối từ một nguồn doanh thu phí chung, và tiêu chí đánh giá của mỗi loại khác nhau như thế nào.',
@@ -4043,7 +4046,7 @@ const translations = {
     'yield-b-path2': 'Bir Position tutun',
     'yield-b-path3': 'Liquidity sağlayın',
     'yield-b-h2-2': 'Özel bir şey yapmam gerekiyor mu?',
-    'yield-b-p-2': 'Hiçbiri <span class="term" onclick="showPopup(\'staking-free\')">staking gibi ek adımlar</span> gerektirmez. Sadece DUSD tutmak veya bir Position tutmak yeterlidir.',
+    'yield-b-p-2': 'Hiçbiri <span class="term" onclick="showPopup(\'staking-free\')">staking gibi ek adımlar</span> gerektirmez. DUSD tutmak veya bir Position tutmak, uygunluk için temel koşuldur (Position için tutma süresi gibi faktörler de geçerlidir — ayrıntılar için Standard\'a bakın).',
     'yield-b-official': 'Mevcut Yield koşulları, oranları ve uygunluk kriterleri zamanla değişebilir.',
     // --- Yield Standard ---
     'yield-s-lead': 'Üç Yield\'in ortak bir ücret geliri havuzundan nasıl dağıtıldığını ve her birinin değerlendirme kriterlerinin nasıl farklılaştığını anlayın.',
