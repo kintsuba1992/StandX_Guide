@@ -1212,12 +1212,12 @@
       <div class="page-header" style="padding-top:0;">
         <div class="page-badge" data-theme="yield" data-mode="standard"></div>
         <h1 class="page-title">Yield</h1>
-        <p class="page-lead" data-i18n="yield-s-lead">3つのYieldは、共通の手数料収益からどう分配されているのか。それぞれの評価軸の違いを理解します。</p>
+        <p class="page-lead" data-i18n="yield-s-lead">3つのYieldは、Trading Feesからそれぞれどのように配分されているのか。それぞれの評価軸の違いを理解します。</p>
       </div>
 
       <div class="content" style="padding-top:32px;">
         <h2 data-i18n="yield-s-h2-1">Yieldは3つの層でできている</h2>
-        <p data-i18n="yield-s-p-1">StandXのYieldは、<span class="term" onclick="showPopup('position-yield-layer')">Position Yield</span>・<span class="term" onclick="showPopup('dusd-yield-layer')">DUSD Yield</span>・<span class="term" onclick="showPopup('maker-yield-layer')">Maker Yield</span>という3つの層で構成されています。Beginnerで見た「何をすると、どのYieldにつながるか」に加え、Standardではこれらが共通の<span class="term" onclick="showPopup('trading-fees')">Trading Fees</span>からどう枝分かれしているかを見ていきます。</p>
+        <p data-i18n="yield-s-p-1">StandXのYieldは、<span class="term" onclick="showPopup('position-yield-layer')">Position Yield</span>・<span class="term" onclick="showPopup('dusd-yield-layer')">DUSD Yield</span>・<span class="term" onclick="showPopup('maker-yield-layer')">Maker Yield</span>という3つの層で構成されています。Beginnerで見た「何をすると、どのYieldにつながるか」に加え、Standardでは<span class="term" onclick="showPopup('trading-fees')">Trading Fees</span>がそれぞれの仕組みに応じてどう配分されているかを見ていきます。</p>
 
         <div class="hubgraph">
           <div class="hubgraph-title" data-i18n="yield-s-hub-title">Trading Feesが分配される先</div>
@@ -1246,7 +1246,7 @@
               <text class="hub-label" x="440" y="278" text-anchor="middle">Maker Yield</text>
             </g>
           </svg>
-          <div class="flow-note" data-i18n="yield-s-hub-note">Trading Feesを中心に、3つのYieldがそれぞれ分配を受けています（優劣・強弱を表す図ではありません）</div>
+          <div class="flow-note" data-i18n="yield-s-hub-note">Trading Feesを中心に、それぞれの仕組みに応じて3つのYieldへ配分されます（優劣・強弱を表す図ではありません）</div>
         </div>
 
         <h2 data-i18n="yield-s-h2-2">それぞれ何を評価しているか</h2>
@@ -1905,7 +1905,7 @@
           <div class="catcard">
             <div class="catcard-tag">Blind Grid</div>
             <div class="catcard-label" data-i18n="um-s-card1-label">外部指標なし</div>
-            <div class="catcard-desc" data-i18n="um-s-card1-desc">外部の価格情報に頼らず、市場内の取引だけで価格が形成されます。</div>
+            <div class="catcard-desc" data-i18n="um-s-card1-desc">外部の価格情報源を使用しない方式です。</div>
           </div>
           <div class="catcard">
             <div class="catcard-tag">Linked Grid</div>
@@ -1984,7 +1984,7 @@
         </div>
         <div class="faq-card">
           <div class="faq-q"><span class="faq-q-mark">Q.</span><span data-i18n="faq-q6">強制清算されそうな時、何ができますか？</span></div>
-          <div class="faq-a" data-i18n="faq-a6">Marginを追加する、Positionの一部を自分の意思で決済する、といった対応が考えられます。基準を下回った瞬間に即座に清算されるわけではないため、状況を確認する余地はあります。</div>
+          <div class="faq-a" data-i18n="faq-a6">Marginを追加する、Positionの一部を自分の意思で決済する、といった対応が考えられます。ただし、Marginが維持基準を下回るとLiquidation Processが開始され、Positionの規模によって処理方法が異なります。</div>
         </div>
         <div class="faq-card">
           <div class="faq-q"><span class="faq-q-mark">Q.</span><span data-i18n="faq-q7">Cross MarginとIsolated Margin、どちらを選べばいいですか？</span></div>
@@ -2470,11 +2470,11 @@ const translations = {
     'yield-b-p-2': 'いずれも<span class="term" onclick="showPopup(\'staking-free\')">ステーキングのような追加操作</span>は不要です。DUSDを保有する、あるいはPositionを持つことが基本的な対象条件です（Positionについては保有時間などの条件も関わります。詳しくはStandardをご覧ください）。',
     'yield-b-official': '現在のYield条件・料率・対象範囲は変更される可能性があります。',
     // --- Yield Standard ---
-    'yield-s-lead': '3つのYieldは、共通の手数料収益からどう分配されているのか。それぞれの評価軸の違いを理解します。',
+    'yield-s-lead': '3つのYieldは、Trading Feesからそれぞれどのように配分されているのか。それぞれの評価軸の違いを理解します。',
     'yield-s-h2-1': 'Yieldは3つの層でできている',
-    'yield-s-p-1': 'StandXのYieldは、<span class="term" onclick="showPopup(\'position-yield-layer\')">Position Yield</span>・<span class="term" onclick="showPopup(\'dusd-yield-layer\')">DUSD Yield</span>・<span class="term" onclick="showPopup(\'maker-yield-layer\')">Maker Yield</span>という3つの層で構成されています。Beginnerで見た「何をすると、どのYieldにつながるか」に加え、Standardではこれらが共通の<span class="term" onclick="showPopup(\'trading-fees\')">Trading Fees</span>からどう枝分かれしているかを見ていきます。',
+    'yield-s-p-1': 'StandXのYieldは、<span class="term" onclick="showPopup(\'position-yield-layer\')">Position Yield</span>・<span class="term" onclick="showPopup(\'dusd-yield-layer\')">DUSD Yield</span>・<span class="term" onclick="showPopup(\'maker-yield-layer\')">Maker Yield</span>という3つの層で構成されています。Beginnerで見た「何をすると、どのYieldにつながるか」に加え、Standardでは<span class="term" onclick="showPopup(\'trading-fees\')">Trading Fees</span>がそれぞれの仕組みに応じてどう配分されているかを見ていきます。',
     'yield-s-hub-title': 'Trading Feesが分配される先',
-    'yield-s-hub-note': 'Trading Feesを中心に、3つのYieldがそれぞれ分配を受けています（優劣・強弱を表す図ではありません）',
+    'yield-s-hub-note': 'Trading Feesを中心に、それぞれの仕組みに応じて3つのYieldへ配分されます（優劣・強弱を表す図ではありません）',
     'yield-s-h2-2': 'それぞれ何を評価しているか',
     'yield-s-p-2': '同じ「Yield」でも、評価している対象は層ごとに異なります。',
     'yield-s-card1-desc': 'Positionのサイズと保有時間を組み合わせて評価します。大きなPositionを長く保有するほど、対象となる評価が高まります。',
@@ -2579,7 +2579,7 @@ const translations = {
     'um-s-h2-2': 'Oracle Gridは市場ごとに選べる',
     'um-s-p-2': '価格をどこから参照するかは、すべての市場で一律ではありません。市場の性質に応じて、3つの方式から選ばれます。',
     'um-s-card1-label': '外部指標なし',
-    'um-s-card1-desc': '外部の価格情報に頼らず、市場内の取引だけで価格が形成されます。',
+    'um-s-card1-desc': '外部の価格情報源を使用しない方式です。',
     'um-s-card2-label': 'StandXキュレーション',
     'um-s-card2-desc': 'StandXが選定した外部の価格情報源と連動します。',
     'um-s-card3-label': 'Sponsor提供',
@@ -2786,11 +2786,11 @@ const translations = {
     'yield-b-p-2': 'None of these require <span class="term" onclick="showPopup(\'staking-free\')">extra steps like staking</span>. Holding DUSD, or holding a Position, is the basic condition for eligibility (for Positions, factors like holding duration also apply — see Standard for details).',
     'yield-b-official': 'Current Yield conditions, rates, and eligibility may change over time.',
     // --- Yield Standard ---
-    'yield-s-lead': 'Understand how the three Yields are distributed from a shared pool of fee revenue, and how each one\'s evaluation criteria differ.',
+    'yield-s-lead': 'Understand how the three Yields are each distributed from Trading Fee revenue, and how each one\'s evaluation criteria differ.',
     'yield-s-h2-1': 'Yield is made up of three layers',
-    'yield-s-p-1': 'StandX\'s Yield is made up of three layers: <span class="term" onclick="showPopup(\'position-yield-layer\')">Position Yield</span>, <span class="term" onclick="showPopup(\'dusd-yield-layer\')">DUSD Yield</span>, and <span class="term" onclick="showPopup(\'maker-yield-layer\')">Maker Yield</span>. In addition to "what action leads to which Yield" from Beginner, Standard looks at how these three branch off from a shared pool of <span class="term" onclick="showPopup(\'trading-fees\')">Trading Fees</span>.',
+    'yield-s-p-1': 'StandX\'s Yield is made up of three layers: <span class="term" onclick="showPopup(\'position-yield-layer\')">Position Yield</span>, <span class="term" onclick="showPopup(\'dusd-yield-layer\')">DUSD Yield</span>, and <span class="term" onclick="showPopup(\'maker-yield-layer\')">Maker Yield</span>. In addition to "what action leads to which Yield" from Beginner, Standard looks at how <span class="term" onclick="showPopup(\'trading-fees\')">Trading Fees</span> are distributed across each of these mechanisms.',
     'yield-s-hub-title': 'Where Trading Fees get distributed',
-    'yield-s-hub-note': 'Trading Fees sit at the center, distributed across the three Yields (this diagram does not represent relative importance or strength).',
+    'yield-s-hub-note': 'Trading Fees sit at the center, distributed across the three Yields according to each mechanism\'s own routing (this diagram does not represent relative importance or strength).',
     'yield-s-h2-2': 'What each one evaluates',
     'yield-s-p-2': 'Even though they\'re all called "Yield," what each layer evaluates is different.',
     'yield-s-card1-desc': 'Evaluated by combining Position size and holding time. Larger Positions held longer earn a higher evaluation.',
@@ -2895,7 +2895,7 @@ const translations = {
     'um-s-h2-2': 'Oracle Grid can be chosen per market',
     'um-s-p-2': 'Where price is referenced from isn\'t uniform across all markets. It\'s chosen from three methods depending on the nature of the market.',
     'um-s-card1-label': 'No external reference',
-    'um-s-card1-desc': 'Price is formed purely from trading within the market, without relying on external price information.',
+    'um-s-card1-desc': 'A method that doesn\'t use any external price source.',
     'um-s-card2-label': 'StandX-curated',
     'um-s-card2-desc': 'Linked to an external price source selected by StandX.',
     'um-s-card3-label': 'Sponsor-provided',
@@ -3102,11 +3102,11 @@ const translations = {
     'yield-b-p-2': '这些都不需要<span class="term" onclick="showPopup(\'staking-free\')">质押等额外操作</span>。持有 DUSD，或持有 Position，是基本的评估条件（Position 还涉及持仓时间等条件，详情请参阅 Standard）。',
     'yield-b-official': '当前的 Yield 条件、利率及适用范围可能会有所变动。',
     // --- Yield Standard ---
-    'yield-s-lead': '理解这三种 Yield 是如何从共同的手续费收入中分配的，以及各自的评估标准有何不同。',
+    'yield-s-lead': '理解这三种 Yield 分别是如何从 Trading Fees 中分配的，以及各自的评估标准有何不同。',
     'yield-s-h2-1': 'Yield 由三个层级构成',
-    'yield-s-p-1': 'StandX 的 Yield 由<span class="term" onclick="showPopup(\'position-yield-layer\')">Position Yield</span>、<span class="term" onclick="showPopup(\'dusd-yield-layer\')">DUSD Yield</span>、<span class="term" onclick="showPopup(\'maker-yield-layer\')">Maker Yield</span>这三个层级构成。除了 Beginner 中介绍的“做什么会对应哪种 Yield”之外，Standard 还将探讨这三者是如何从共同的<span class="term" onclick="showPopup(\'trading-fees\')">Trading Fees</span>中分支而来的。',
+    'yield-s-p-1': 'StandX 的 Yield 由<span class="term" onclick="showPopup(\'position-yield-layer\')">Position Yield</span>、<span class="term" onclick="showPopup(\'dusd-yield-layer\')">DUSD Yield</span>、<span class="term" onclick="showPopup(\'maker-yield-layer\')">Maker Yield</span>这三个层级构成。除了 Beginner 中介绍的“做什么会对应哪种 Yield”之外，Standard 还将探讨<span class="term" onclick="showPopup(\'trading-fees\')">Trading Fees</span>是如何按各自的机制分配到这三者的。',
     'yield-s-hub-title': 'Trading Fees 分配的去向',
-    'yield-s-hub-note': 'Trading Fees 位于中心，分别分配给三种 Yield（此图并不表示优劣或强弱关系）。',
+    'yield-s-hub-note': 'Trading Fees 位于中心，按各自机制分配给三种 Yield（此图并不表示优劣或强弱关系）。',
     'yield-s-h2-2': '各自评估的是什么',
     'yield-s-p-2': '虽然同样称为“Yield”，但每个层级评估的对象各不相同。',
     'yield-s-card1-desc': '综合评估 Position 的规模与持仓时间。持有越大的 Position、持有时间越长，评估越高。',
@@ -3211,7 +3211,7 @@ const translations = {
     'um-s-h2-2': 'Oracle Grid 可按市场选择',
     'um-s-p-2': '价格参考来源并非所有市场统一，而是根据市场性质从三种方式中选择。',
     'um-s-card1-label': '无外部参考',
-    'um-s-card1-desc': '不依赖外部价格信息，价格完全由市场内部交易形成。',
+    'um-s-card1-desc': '不使用任何外部价格来源的方式。',
     'um-s-card2-label': 'StandX 策展',
     'um-s-card2-desc': '与 StandX 精选的外部价格来源联动。',
     'um-s-card3-label': 'Sponsor 提供',
@@ -3418,11 +3418,11 @@ const translations = {
     'yield-b-p-2': '어느 쪽도 <span class="term" onclick="showPopup(\'staking-free\')">스테이킹 같은 추가 조작</span>은 필요하지 않습니다. DUSD를 보유하거나 Position을 갖는 것이 기본적인 대상 조건입니다（Position의 경우 보유 시간 등의 조건도 관련됩니다. 자세한 내용은 Standard를 참조하세요）.',
     'yield-b-official': '현재의 Yield 조건・이율・대상 범위는 변경될 수 있습니다.',
     // --- Yield Standard ---
-    'yield-s-lead': '세 가지 Yield가 공통의 수수료 수익에서 어떻게 분배되는지, 각각의 평가 기준의 차이를 이해합니다.',
+    'yield-s-lead': '세 가지 Yield가 Trading Fees에서 각각 어떻게 분배되는지, 각각의 평가 기준의 차이를 이해합니다.',
     'yield-s-h2-1': 'Yield는 세 개의 층으로 이루어져 있다',
-    'yield-s-p-1': 'StandX의 Yield는 <span class="term" onclick="showPopup(\'position-yield-layer\')">Position Yield</span>・<span class="term" onclick="showPopup(\'dusd-yield-layer\')">DUSD Yield</span>・<span class="term" onclick="showPopup(\'maker-yield-layer\')">Maker Yield</span>라는 세 개의 층으로 구성되어 있습니다. Beginner에서 본 「무엇을 하면 어떤 Yield로 이어지는가」에 더해, Standard에서는 이들이 공통의 <span class="term" onclick="showPopup(\'trading-fees\')">Trading Fees</span>에서 어떻게 나뉘는지 살펴봅니다.',
+    'yield-s-p-1': 'StandX의 Yield는 <span class="term" onclick="showPopup(\'position-yield-layer\')">Position Yield</span>・<span class="term" onclick="showPopup(\'dusd-yield-layer\')">DUSD Yield</span>・<span class="term" onclick="showPopup(\'maker-yield-layer\')">Maker Yield</span>라는 세 개의 층으로 구성되어 있습니다. Beginner에서 본 「무엇을 하면 어떤 Yield로 이어지는가」에 더해, Standard에서는 <span class="term" onclick="showPopup(\'trading-fees\')">Trading Fees</span>가 각각의 방식에 따라 어떻게 분배되는지 살펴봅니다.',
     'yield-s-hub-title': 'Trading Fees가 분배되는 곳',
-    'yield-s-hub-note': 'Trading Fees를 중심으로 세 가지 Yield가 각각 분배받고 있습니다（우열・강약을 나타내는 그림이 아닙니다）.',
+    'yield-s-hub-note': 'Trading Fees를 중심으로 각각의 방식에 따라 세 가지 Yield로 분배됩니다（우열・강약을 나타내는 그림이 아닙니다）.',
     'yield-s-h2-2': '각각 무엇을 평가하는가',
     'yield-s-p-2': '같은 「Yield」라도 평가 대상은 층마다 다릅니다.',
     'yield-s-card1-desc': 'Position의 크기와 보유 시간을 조합하여 평가합니다. 큰 Position을 오래 보유할수록 평가가 높아집니다.',
@@ -3527,7 +3527,7 @@ const translations = {
     'um-s-h2-2': 'Oracle Grid는 시장마다 선택할 수 있다',
     'um-s-p-2': '가격을 어디서 참조할지는 모든 시장에서 동일하지 않습니다. 시장의 성격에 따라 세 가지 방식 중에서 선택됩니다.',
     'um-s-card1-label': '외부 지표 없음',
-    'um-s-card1-desc': '외부 가격 정보에 의존하지 않고, 시장 내 거래만으로 가격이 형성됩니다.',
+    'um-s-card1-desc': '외부 가격 정보원을 전혀 사용하지 않는 방식입니다.',
     'um-s-card2-label': 'StandX 큐레이션',
     'um-s-card2-desc': 'StandX가 선정한 외부 가격 정보원과 연동합니다.',
     'um-s-card3-label': 'Sponsor 제공',
@@ -3734,11 +3734,11 @@ const translations = {
     'yield-b-p-2': 'Không có cái nào yêu cầu <span class="term" onclick="showPopup(\'staking-free\')">bước bổ sung như staking</span>. Nắm giữ DUSD, hoặc nắm giữ Position, là điều kiện cơ bản để đủ tính (đối với Position, các yếu tố như thời gian nắm giữ cũng liên quan — xem Standard để biết chi tiết).',
     'yield-b-official': 'Điều kiện, lãi suất và tiêu chuẩn đủ điều kiện của Yield hiện tại có thể thay đổi theo thời gian.',
     // --- Yield Standard ---
-    'yield-s-lead': 'Hiểu cách ba loại Yield được phân phối từ một nguồn doanh thu phí chung, và tiêu chí đánh giá của mỗi loại khác nhau như thế nào.',
+    'yield-s-lead': 'Hiểu cách ba loại Yield được phân phối từ nguồn doanh thu Trading Fees, và tiêu chí đánh giá của mỗi loại khác nhau như thế nào.',
     'yield-s-h2-1': 'Yield được cấu thành từ ba tầng',
-    'yield-s-p-1': 'Yield của StandX được cấu thành từ ba tầng: <span class="term" onclick="showPopup(\'position-yield-layer\')">Position Yield</span>, <span class="term" onclick="showPopup(\'dusd-yield-layer\')">DUSD Yield</span>, và <span class="term" onclick="showPopup(\'maker-yield-layer\')">Maker Yield</span>. Bên cạnh "hành động nào dẫn đến loại Yield nào" đã thấy ở Beginner, Standard xem xét cách ba loại này phân nhánh từ một nguồn <span class="term" onclick="showPopup(\'trading-fees\')">Trading Fees</span> chung.',
+    'yield-s-p-1': 'Yield của StandX được cấu thành từ ba tầng: <span class="term" onclick="showPopup(\'position-yield-layer\')">Position Yield</span>, <span class="term" onclick="showPopup(\'dusd-yield-layer\')">DUSD Yield</span>, và <span class="term" onclick="showPopup(\'maker-yield-layer\')">Maker Yield</span>. Bên cạnh "hành động nào dẫn đến loại Yield nào" đã thấy ở Beginner, Standard xem xét cách <span class="term" onclick="showPopup(\'trading-fees\')">Trading Fees</span> được phân phối theo từng cơ chế riêng cho ba loại này.',
     'yield-s-hub-title': 'Trading Fees được phân phối đến đâu',
-    'yield-s-hub-note': 'Trading Fees nằm ở trung tâm, được phân phối cho ba loại Yield (sơ đồ này không thể hiện mức độ quan trọng hay mạnh yếu tương đối).',
+    'yield-s-hub-note': 'Trading Fees nằm ở trung tâm, được phân phối cho ba loại Yield theo từng cơ chế riêng (sơ đồ này không thể hiện mức độ quan trọng hay mạnh yếu tương đối).',
     'yield-s-h2-2': 'Mỗi loại đánh giá điều gì',
     'yield-s-p-2': 'Dù cùng được gọi là "Yield", mỗi tầng đánh giá một đối tượng khác nhau.',
     'yield-s-card1-desc': 'Được đánh giá bằng cách kết hợp kích thước Position và thời gian nắm giữ. Position lớn hơn, giữ lâu hơn sẽ có đánh giá cao hơn.',
@@ -3843,7 +3843,7 @@ const translations = {
     'um-s-h2-2': 'Oracle Grid có thể được lựa chọn theo từng thị trường',
     'um-s-p-2': 'Nơi tham chiếu giá không giống nhau ở tất cả các thị trường. Nó được lựa chọn từ ba phương pháp tùy theo tính chất của thị trường.',
     'um-s-card1-label': 'Không có tham chiếu bên ngoài',
-    'um-s-card1-desc': 'Giá được hình thành hoàn toàn từ giao dịch trong thị trường, không phụ thuộc vào thông tin giá bên ngoài.',
+    'um-s-card1-desc': 'Một phương thức không sử dụng bất kỳ nguồn giá bên ngoài nào.',
     'um-s-card2-label': 'Được StandX tuyển chọn',
     'um-s-card2-desc': 'Liên kết với một nguồn giá bên ngoài do StandX lựa chọn.',
     'um-s-card3-label': 'Do Sponsor cung cấp',
@@ -4050,11 +4050,11 @@ const translations = {
     'yield-b-p-2': 'Hiçbiri <span class="term" onclick="showPopup(\'staking-free\')">staking gibi ek adımlar</span> gerektirmez. DUSD tutmak veya bir Position tutmak, uygunluk için temel koşuldur (Position için tutma süresi gibi faktörler de geçerlidir — ayrıntılar için Standard\'a bakın).',
     'yield-b-official': 'Mevcut Yield koşulları, oranları ve uygunluk kriterleri zamanla değişebilir.',
     // --- Yield Standard ---
-    'yield-s-lead': 'Üç Yield\'in ortak bir ücret geliri havuzundan nasıl dağıtıldığını ve her birinin değerlendirme kriterlerinin nasıl farklılaştığını anlayın.',
+    'yield-s-lead': 'Üç Yield\'in Trading Fees gelirinden her birinin nasıl dağıtıldığını ve değerlendirme kriterlerinin nasıl farklılaştığını anlayın.',
     'yield-s-h2-1': 'Yield üç katmandan oluşur',
-    'yield-s-p-1': 'StandX\'in Yield\'i üç katmandan oluşur: <span class="term" onclick="showPopup(\'position-yield-layer\')">Position Yield</span>, <span class="term" onclick="showPopup(\'dusd-yield-layer\')">DUSD Yield</span> ve <span class="term" onclick="showPopup(\'maker-yield-layer\')">Maker Yield</span>. Beginner\'da görülen "hangi eylem hangi Yield\'e yol açar" bilgisine ek olarak, Standard bu üçünün ortak bir <span class="term" onclick="showPopup(\'trading-fees\')">Trading Fees</span> havuzundan nasıl ayrıldığına bakar.',
+    'yield-s-p-1': 'StandX\'in Yield\'i üç katmandan oluşur: <span class="term" onclick="showPopup(\'position-yield-layer\')">Position Yield</span>, <span class="term" onclick="showPopup(\'dusd-yield-layer\')">DUSD Yield</span> ve <span class="term" onclick="showPopup(\'maker-yield-layer\')">Maker Yield</span>. Beginner\'da görülen "hangi eylem hangi Yield\'e yol açar" bilgisine ek olarak, Standard <span class="term" onclick="showPopup(\'trading-fees\')">Trading Fees</span>\'in her bir mekanizmaya göre bu üçüne nasıl dağıtıldığına bakar.',
     'yield-s-hub-title': 'Trading Fees nereye dağıtılır',
-    'yield-s-hub-note': 'Trading Fees merkezde yer alır ve üç Yield arasında dağıtılır (bu şema göreceli önem veya güç ilişkisini göstermez).',
+    'yield-s-hub-note': 'Trading Fees merkezde yer alır ve her bir mekanizmaya göre üç Yield arasında dağıtılır (bu şema göreceli önem veya güç ilişkisini göstermez).',
     'yield-s-h2-2': 'Her biri neyi değerlendirir',
     'yield-s-p-2': 'Hepsi "Yield" olarak adlandırılsa da, her katmanın değerlendirdiği şey farklıdır.',
     'yield-s-card1-desc': 'Position büyüklüğü ve tutma süresi birleştirilerek değerlendirilir. Daha büyük Position\'lar daha uzun süre tutulduğunda daha yüksek değerlendirme alır.',
@@ -4159,7 +4159,7 @@ const translations = {
     'um-s-h2-2': 'Oracle Grid piyasa başına seçilebilir',
     'um-s-p-2': 'Fiyatın nereden referans alındığı tüm piyasalarda aynı değildir. Piyasanın niteliğine bağlı olarak üç yöntemden biri seçilir.',
     'um-s-card1-label': 'Harici referans yok',
-    'um-s-card1-desc': 'Fiyat, harici fiyat bilgisine dayanmadan tamamen piyasa içi işlemlerden oluşur.',
+    'um-s-card1-desc': 'Herhangi bir harici fiyat kaynağı kullanmayan bir yöntem.',
     'um-s-card2-label': 'StandX tarafından derlenmiş',
     'um-s-card2-desc': 'StandX tarafından seçilen harici bir fiyat kaynağına bağlıdır.',
     'um-s-card3-label': 'Sponsor tarafından sağlanmış',
@@ -4366,11 +4366,11 @@ const translations = {
     'yield-b-p-2': 'Nenhum deles exige <span class="term" onclick="showPopup(\'staking-free\')">etapas extras como staking</span>. Manter DUSD, ou manter uma Position, é a condição básica de elegibilidade (para Positions, fatores como o tempo de posse também se aplicam — veja o Standard para mais detalhes).',
     'yield-b-official': 'As condições, taxas e critérios de elegibilidade do Yield podem mudar com o tempo.',
     // --- Yield Standard ---
-    'yield-s-lead': 'Entenda como os três Yields são distribuídos a partir de um pool comum de receita de taxas, e como os critérios de avaliação de cada um diferem.',
+    'yield-s-lead': 'Entenda como cada um dos três Yields é distribuído a partir da receita de Trading Fees, e como os critérios de avaliação de cada um diferem.',
     'yield-s-h2-1': 'O Yield é formado por três camadas',
-    'yield-s-p-1': 'O Yield da StandX é formado por três camadas: <span class="term" onclick="showPopup(\'position-yield-layer\')">Position Yield</span>, <span class="term" onclick="showPopup(\'dusd-yield-layer\')">DUSD Yield</span> e <span class="term" onclick="showPopup(\'maker-yield-layer\')">Maker Yield</span>. Além de "qual ação leva a qual Yield", visto no Beginner, o Standard analisa como essas três camadas se ramificam a partir de uma fonte comum de <span class="term" onclick="showPopup(\'trading-fees\')">Trading Fees</span>.',
+    'yield-s-p-1': 'O Yield da StandX é formado por três camadas: <span class="term" onclick="showPopup(\'position-yield-layer\')">Position Yield</span>, <span class="term" onclick="showPopup(\'dusd-yield-layer\')">DUSD Yield</span> e <span class="term" onclick="showPopup(\'maker-yield-layer\')">Maker Yield</span>. Além de "qual ação leva a qual Yield", visto no Beginner, o Standard analisa como as <span class="term" onclick="showPopup(\'trading-fees\')">Trading Fees</span> são distribuídas de acordo com cada mecanismo.',
     'yield-s-hub-title': 'Para onde as Trading Fees são distribuídas',
-    'yield-s-hub-note': 'As Trading Fees estão no centro, distribuídas entre os três Yields (este diagrama não representa importância ou força relativa).',
+    'yield-s-hub-note': 'As Trading Fees estão no centro, distribuídas entre os três Yields de acordo com cada mecanismo (este diagrama não representa importância ou força relativa).',
     'yield-s-h2-2': 'O que cada um avalia',
     'yield-s-p-2': 'Embora todos sejam chamados de "Yield", o que cada camada avalia é diferente.',
     'yield-s-card1-desc': 'Avaliado combinando o tamanho da Position e o tempo de posse. Positions maiores mantidas por mais tempo recebem uma avaliação mais alta.',
@@ -4475,7 +4475,7 @@ const translations = {
     'um-s-h2-2': 'O Oracle Grid pode ser escolhido por mercado',
     'um-s-p-2': 'De onde o preço é referenciado não é uniforme em todos os mercados. É escolhido entre três métodos, dependendo da natureza do mercado.',
     'um-s-card1-label': 'Sem referência externa',
-    'um-s-card1-desc': 'O preço se forma puramente a partir do trading dentro do mercado, sem depender de informações de preço externas.',
+    'um-s-card1-desc': 'Um método que não usa nenhuma fonte de preço externa.',
     'um-s-card2-label': 'Curado pela StandX',
     'um-s-card2-desc': 'Vinculado a uma fonte de preço externa selecionada pela StandX.',
     'um-s-card3-label': 'Fornecido pelo Sponsor',
@@ -4615,7 +4615,7 @@ const terms = {
     '一般的なステーブルコインは「価格を1ドルに保つこと」だけを目的としますが、Yield-bearing Stablecoinはそこに「保有しているだけで増える」という収益機能を組み合わせています。StandXのDUSDがこれにあたり、ステーキングのような追加操作は一切不要です。ウォレットに置いておくだけでも、Perpsの証拠金として使っていても、対象になります。'],
   'yield': ['Yield',
     'DUSD保有やPosition保有などの行動に応じて得られる継続的な収益のことです。',
-    'StandXにおけるYieldは1種類ではなく、DUSD Yield・Position Yield・Maker Yieldという3つの層に分かれています。それぞれ評価している対象（保有量・保有時間・流動性提供量）が異なり、いずれも共通のTrading Feesから分配される仕組みになっています。'],
+    'StandXにおけるYieldは1種類ではなく、DUSD Yield・Position Yield・Maker Yieldという3つの層に分かれています。それぞれ評価している対象（保有量・保有時間・流動性提供量）が異なり、いずれもTrading Feesからそれぞれのfee-routingを通じて分配されます。'],
   'margin': ['Margin',
     'Positionを維持するために担保として差し入れる資金のことです。',
     'MarginはPositionの損益と連動して増減します。StandXではDUSDがMarginとして使われ、証拠金として拘束されている間もYieldの対象になり続けるのが特徴です。Marginの水準はMark Priceを基準に常時判定されており、維持基準を下回ると強制清算のプロセスが開始されます。'],
@@ -4699,10 +4699,10 @@ const terms = {
     '維持基準はMark Priceを基準に常時判定されています。基準を下回った瞬間に即座に決済されるわけではなく、Order Book→Shield Vault→ADLという段階的な防御構造の中で処理されます。'],
   'trading-fees': ['Trading Fees',
     'Perpsでの取引に対してStandXが受け取る手数料のことです。この一部が複数のYieldへ分配されます。',
-    'Trading Feesは、Position Yield（SIP-2）・DUSD Yield（SIP-3）・Maker Yield（SIP-5A）という3つの層に分配される共通の原資です。取引が活発になるほど、これら3つのYield全体の水準にも影響します。'],
+    'Trading Feesは、Position Yield（SIP-2）・DUSD Yield（SIP-3）・Maker Yield（SIP-5A）というそれぞれの仕組みに応じて配分されます。それぞれのfee-routingは独立して会計・決済されており、単一の共通プールに集約されるわけではありません。取引活動によって発生する手数料収益は、それぞれのYieldメカニズムの原資に影響する可能性があります。'],
   'proximity': ['Proximity（近さ）',
     '注文価格がMark Priceにどれだけ近いかを表す指標です。近いほど、Order Bookの安定に貢献していると評価されます。',
-    'Maker Hoursを構成する3要因の一つです。価格に近く発注するほど、少ない資本でも高い評価（Maker Hours）を得られるため、大きな資金を持たないMakerでも、発注の工夫次第で大きな資金を持つMakerと同等の評価を得ることが可能になります。'],
+    'Maker Hoursを構成する3要因の一つです。価格に近く発注するほど、少ない資本でも高い評価（Maker Hours）を得られる関係があります。'],
   'capital-efficiency': ['資本効率の考え方',
     '評価を得るために必要な資金の量は、発注の仕方（サイズや価格の近さ）によって変わる、という考え方です。',
     'Maker Hoursの設計に反映されている考え方です。単純に資金量の多寡だけで評価が決まるのではなく、Mark Priceへの近さ（Proximity）を高めることで、資本量だけに依存しない評価を得られるようになっています。ただし、実際の評価にはTierや時間あたりの上限など他の要因も関わります。'],
@@ -4788,7 +4788,7 @@ const termsEn = {
     'A typical stablecoin aims only to "keep its price at $1." A Yield-bearing Stablecoin adds an earning feature on top of that — its value grows simply from being held. StandX\'s DUSD is exactly this — no additional steps like staking are needed. It applies whether you leave it in your wallet or use it as margin for Perps.'],
   'yield': ['Yield',
     'Ongoing earnings you receive based on actions such as holding DUSD or holding a Position.',
-    'StandX\'s Yield isn\'t a single thing — it\'s split into three layers: DUSD Yield, Position Yield, and Maker Yield. Each evaluates something different (amount held, holding duration, liquidity contributed), and all three are distributed from a shared pool of Trading Fees.'],
+    'StandX\'s Yield isn\'t a single thing — it\'s split into three layers: DUSD Yield, Position Yield, and Maker Yield. Each evaluates something different (amount held, holding duration, liquidity contributed), and all three are distributed from Trading Fee revenue through their respective fee-routing mechanisms.'],
   'margin': ['Margin',
     'Funds put up as collateral to maintain a Position.',
     'Margin rises and falls along with a Position\'s profit and loss. On StandX, DUSD is used as Margin, and it continues to be eligible for Yield even while locked up as collateral — a distinctive feature. Margin levels are constantly judged against Mark Price, and falling below the maintenance threshold starts the forced liquidation process.'],
@@ -4872,10 +4872,10 @@ const termsEn = {
     'The maintenance threshold is constantly judged against Mark Price. It doesn\'t settle instantly the moment it\'s crossed — it\'s handled through the staged defense structure: Order Book → Shield Vault → ADL.'],
   'trading-fees': ['Trading Fees',
     'Fees StandX receives for trading activity on Perps. A portion of this is distributed across multiple Yields.',
-    'Trading Fees are the shared source distributed across three layers: Position Yield (SIP-2), DUSD Yield (SIP-3), and Maker Yield (SIP-5A). The more active trading becomes, the more it affects the overall level of all three Yields.'],
+    'Trading Fees are distributed across three layers — Position Yield (SIP-2), DUSD Yield (SIP-3), and Maker Yield (SIP-5A) — according to each mechanism\'s own fee-routing. Each of these routes is accounted for and settled independently, rather than being combined into a single shared pool. Trading activity generates fee revenue that can affect the funding available to each of these Yield mechanisms.'],
   'proximity': ['Proximity',
     'A measure of how close an order\'s price is to Mark Price. The closer it is, the more it\'s considered to contribute to Order Book stability.',
-    'This is one of the three factors that make up Maker Hours. Placing orders closer to the price earns a higher evaluation (Maker Hours) with less capital, which means a Maker without deep pockets can, with the right order placement, achieve an evaluation comparable to one with much more capital.'],
+    'This is one of the three factors that make up Maker Hours. Placing orders closer to the price earns a higher evaluation (Maker Hours) with less capital.'],
   'capital-efficiency': ['Capital Efficiency',
     'The idea that the amount of capital needed to earn a given evaluation varies depending on how you place your orders (size and proximity to price).',
     'This idea is reflected in the design of Maker Hours. Rather than being determined purely by how much capital you have, increasing Proximity to Mark Price lets you achieve an evaluation that doesn\'t depend on capital alone. That said, the actual evaluation also involves other factors like Tier and hourly caps.'],
@@ -4961,7 +4961,7 @@ const termsZh = {
     '一般的稳定币仅以“将价格维持在 1 美元”为目标，而 Yield-bearing Stablecoin 在此基础上增加了“仅凭持有即可增值”的收益功能。StandX 的 DUSD 正是如此，完全不需要质押等额外操作。无论是放在钱包中，还是用作 Perps 的保证金，都会成为评估对象。'],
   'yield': ['Yield',
     '根据持有 DUSD、持有 Position 等行为所获得的持续性收益。',
-    'StandX 的 Yield 并非单一种类，而是分为 DUSD Yield、Position Yield、Maker Yield 三个层级。各自评估的对象（持有量、持仓时间、流动性提供量）不同，但均从共同的 Trading Fees 中分配而来。'],
+    'StandX 的 Yield 并非单一种类，而是分为 DUSD Yield、Position Yield、Maker Yield 三个层级。各自评估的对象（持有量、持仓时间、流动性提供量）不同，但均通过各自的 fee-routing 机制从 Trading Fees 中分配而来。'],
   'margin': ['Margin（保证金）',
     '为维持 Position 而作为担保存入的资金。',
     'Margin 会随 Position 的盈亏而增减。在 StandX 中，DUSD 被用作 Margin，其特点在于即使作为保证金被占用期间，也会持续成为 Yield 的评估对象。Margin 的水平始终以 Mark Price 为基准进行判定，一旦低于维持保证金水平，强制平仓流程就会启动。'],
@@ -5045,10 +5045,10 @@ const termsZh = {
     '维持保证金水平始终以 Mark Price 为基准进行判定。并非一旦低于该水平就会瞬间被平仓，而是会在 Order Book → Shield Vault → ADL 这样分阶段的防御结构中进行处理。'],
   'trading-fees': ['Trading Fees（交易手续费）',
     'StandX 就 Perps 交易所收取的手续费。其中一部分会分配至多种 Yield 中。',
-    'Trading Fees 是分配至 Position Yield（SIP-2）、DUSD Yield（SIP-3）、Maker Yield（SIP-5A）这三个层级的共同资金来源。交易越活跃，对这三种 Yield 整体水平的影响也越大。'],
+    'Trading Fees 会按照各自机制的 fee-routing，分配至 Position Yield（SIP-2）、DUSD Yield（SIP-3）、Maker Yield（SIP-5A）这三个层级。每条分配路径都是独立核算、独立结算的，并非汇入单一的共同资金池。交易活动产生的手续费收入，可能会影响这些 Yield 机制各自可用的资金。'],
   'proximity': ['Proximity（接近程度）',
     '表示订单价格与 Mark Price 接近程度的指标。越接近，越被认为对 Order Book 的稳定有所贡献。',
-    '这是构成 Maker Hours 的三个因素之一。挂单价格越接近市场价，即使资金较少，也能获得更高的评估（Maker Hours），因此没有雄厚资金的 Maker，只要在挂单方式上多加考虑，也有可能获得与资金雄厚的 Maker 相当的评估。'],
+    '这是构成 Maker Hours 的三个因素之一。挂单价格越接近市场价，即使资金较少，也能获得更高的评估（Maker Hours）。'],
   'capital-efficiency': ['资本效率的理念',
     '获得同等评估所需的资金量，会因挂单方式（规模或与价格的接近程度）而有所不同的理念。',
     '这一理念体现在 Maker Hours 的设计中。评估并非单纯由资金量的多少决定，而是通过提高与 Mark Price 的接近程度（Proximity），实现不完全依赖资本量的评估。不过，实际评估还会涉及 Tier、每小时上限等其他因素。'],
@@ -5134,7 +5134,7 @@ const termsKo = {
     '일반적인 스테이블코인은 「가격을 1달러로 유지하는 것」만을 목적으로 하지만, Yield-bearing Stablecoin은 여기에 「보유하는 것만으로 늘어난다」는 수익 기능을 결합한 것입니다. StandX의 DUSD가 이에 해당하며, 스테이킹 같은 추가 조작은 전혀 필요하지 않습니다. 지갑에 넣어두기만 해도, Perps의 증거금으로 사용 중이어도 대상이 됩니다.'],
   'yield': ['Yield',
     'DUSD 보유나 Position 보유 등의 행동에 따라 얻어지는 지속적인 수익입니다.',
-    'StandX의 Yield는 한 종류가 아니라 DUSD Yield・Position Yield・Maker Yield라는 세 가지 층으로 나뉘어 있습니다. 각각 평가하는 대상（보유량・보유 시간・유동성 제공량）이 다르며, 모두 공통의 Trading Fees에서 분배되는 구조입니다.'],
+    'StandX의 Yield는 한 종류가 아니라 DUSD Yield・Position Yield・Maker Yield라는 세 가지 층으로 나뉘어 있습니다. 각각 평가하는 대상（보유량・보유 시간・유동성 제공량）이 다르며, 모두 각자의 fee-routing 방식을 통해 Trading Fees에서 분배됩니다.'],
   'margin': ['Margin',
     'Position을 유지하기 위해 담보로 넣는 자금입니다.',
     'Margin은 Position의 손익과 연동하여 증감합니다. StandX에서는 DUSD가 Margin으로 사용되며, 증거금으로 묶여 있는 동안에도 Yield 대상이 계속된다는 것이 특징입니다. Margin 수준은 Mark Price를 기준으로 항상 판단되며, 유지증거금 수준 아래로 떨어지면 강제청산 프로세스가 시작됩니다.'],
@@ -5218,10 +5218,10 @@ const termsKo = {
     '유지증거금 수준은 Mark Price를 기준으로 항상 판단됩니다. 기준을 밑돈 순간 즉시 청산되는 것이 아니라, Order Book→Shield Vault→ADL이라는 단계적 방어 구조 안에서 처리됩니다.'],
   'trading-fees': ['Trading Fees',
     'Perps에서의 거래에 대해 StandX가 받는 수수료입니다. 이 중 일부가 여러 Yield로 분배됩니다.',
-    'Trading Fees는 Position Yield（SIP-2）・DUSD Yield（SIP-3）・Maker Yield（SIP-5A）라는 세 층에 분배되는 공통 재원입니다. 거래가 활발해질수록 이 세 가지 Yield 전체 수준에도 영향을 미칩니다.'],
+    'Trading Fees는 각 메커니즘의 fee-routing 방식에 따라 Position Yield（SIP-2）・DUSD Yield（SIP-3）・Maker Yield（SIP-5A）라는 세 층으로 분배됩니다. 각 경로는 단일한 공통 자금 풀로 합쳐지는 것이 아니라, 독립적으로 회계 처리되고 정산됩니다. 거래 활동으로 발생하는 수수료 수익은 각 Yield 메커니즘에 제공되는 재원에 영향을 줄 수 있습니다.'],
   'proximity': ['Proximity（근접도）',
     '주문 가격이 Mark Price에 얼마나 가까운지를 나타내는 지표입니다. 가까울수록 Order Book의 안정에 기여하는 것으로 평가됩니다.',
-    'Maker Hours를 구성하는 세 요인 중 하나입니다. 가격에 가깝게 주문할수록 적은 자본으로도 높은 평가（Maker Hours）를 받을 수 있어, 큰 자금을 갖지 않은 Maker라도 주문 방식에 따라 큰 자금을 가진 Maker와 동등한 평가를 받을 수 있습니다.'],
+    'Maker Hours를 구성하는 세 요인 중 하나입니다. 가격에 가깝게 주문할수록 적은 자본으로도 높은 평가（Maker Hours）를 받을 수 있습니다.'],
   'capital-efficiency': ['자본 효율의 개념',
     '평가를 받기 위해 필요한 자금의 양은 주문 방식（규모나 가격과의 근접도）에 따라 달라진다는 개념입니다.',
     'Maker Hours의 설계에 반영된 개념입니다. 단순히 자금량의 많고 적음만으로 평가가 결정되는 것이 아니라, Mark Price와의 근접도（Proximity）를 높임으로써 자본량에만 의존하지 않는 평가를 받을 수 있게 되어 있습니다. 다만 실제 평가에는 Tier나 시간당 상한 등 다른 요인도 관련됩니다.'],
@@ -5307,7 +5307,7 @@ const termsVi = {
     'Một stablecoin thông thường chỉ nhắm đến việc "giữ giá ở mức 1 đô la." Một Yield-bearing Stablecoin kết hợp điều đó với tính năng "tăng lên chỉ bằng cách nắm giữ." DUSD của StandX chính là như vậy — không cần thêm bước nào như staking. Nó áp dụng dù bạn để trong ví hay dùng làm margin cho Perps.'],
   'yield': ['Yield',
     'Thu nhập liên tục bạn nhận được dựa trên các hành động như nắm giữ DUSD hoặc nắm giữ Position.',
-    'Yield của StandX không phải chỉ một loại — nó được chia thành ba tầng: DUSD Yield, Position Yield, và Maker Yield. Mỗi tầng đánh giá một điều khác nhau (số lượng nắm giữ, thời gian nắm giữ, thanh khoản đóng góp), và cả ba đều được phân phối từ một nguồn Trading Fees chung.'],
+    'Yield của StandX không phải chỉ một loại — nó được chia thành ba tầng: DUSD Yield, Position Yield, và Maker Yield. Mỗi tầng đánh giá một điều khác nhau (số lượng nắm giữ, thời gian nắm giữ, thanh khoản đóng góp), và cả ba đều được phân phối từ doanh thu Trading Fees thông qua cơ chế fee-routing riêng của từng loại.'],
   'margin': ['Margin',
     'Số vốn được đặt làm tài sản thế chấp để duy trì một Position.',
     'Margin tăng giảm cùng với lãi/lỗ của Position. Trên StandX, DUSD được dùng làm Margin, và nó tiếp tục đủ điều kiện nhận Yield ngay cả khi bị khóa làm tài sản thế chấp — một tính năng đặc trưng. Mức Margin luôn được đánh giá dựa trên Mark Price, và việc giảm xuống dưới ngưỡng ký quỹ duy trì sẽ khởi động quy trình thanh lý cưỡng chế.'],
@@ -5391,10 +5391,10 @@ const termsVi = {
     'Ngưỡng ký quỹ duy trì luôn được đánh giá dựa trên Mark Price. Nó không thanh toán ngay lập tức khi bị vượt qua — nó được xử lý qua cấu trúc phòng thủ theo giai đoạn: Order Book → Shield Vault → ADL.'],
   'trading-fees': ['Trading Fees',
     'Phí StandX nhận được từ hoạt động giao dịch trên Perps. Một phần trong đó được phân phối cho nhiều loại Yield.',
-    'Trading Fees là nguồn chung được phân phối cho ba tầng: Position Yield (SIP-2), DUSD Yield (SIP-3), và Maker Yield (SIP-5A). Giao dịch càng sôi động, nó càng ảnh hưởng đến mức tổng thể của cả ba loại Yield.'],
+    'Trading Fees được phân phối cho ba tầng — Position Yield (SIP-2), DUSD Yield (SIP-3), và Maker Yield (SIP-5A) — theo cơ chế fee-routing riêng của từng loại. Mỗi luồng phân phối được hạch toán và quyết toán độc lập, chứ không gộp chung vào một quỹ duy nhất. Doanh thu phí phát sinh từ hoạt động giao dịch có thể ảnh hưởng đến nguồn vốn dành cho mỗi cơ chế Yield này.'],
   'proximity': ['Proximity',
     'Một thước đo về mức độ gần của giá lệnh với Mark Price. Càng gần, nó càng được xem là đóng góp vào sự ổn định của Order Book.',
-    'Đây là một trong ba yếu tố tạo nên Maker Hours. Đặt lệnh gần giá hơn giúp đạt được đánh giá cao hơn (Maker Hours) với ít vốn hơn, nghĩa là một Maker không có nhiều vốn vẫn có thể, với cách đặt lệnh phù hợp, đạt được đánh giá tương đương với một Maker có nhiều vốn hơn.'],
+    'Đây là một trong ba yếu tố tạo nên Maker Hours. Đặt lệnh gần giá hơn giúp đạt được đánh giá cao hơn (Maker Hours) với ít vốn hơn.'],
   'capital-efficiency': ['Hiệu quả sử dụng vốn',
     'Ý tưởng rằng lượng vốn cần thiết để đạt được một đánh giá nhất định thay đổi tùy theo cách bạn đặt lệnh (kích thước và độ gần với giá).',
     'Ý tưởng này được phản ánh trong thiết kế của Maker Hours. Thay vì được quyết định hoàn toàn bởi số vốn bạn có, việc tăng độ gần với Mark Price (Proximity) cho phép bạn đạt được một đánh giá không chỉ phụ thuộc vào vốn. Tuy nhiên, đánh giá thực tế cũng liên quan đến các yếu tố khác như Tier và giới hạn theo giờ.'],
@@ -5480,7 +5480,7 @@ const termsTr = {
     'Tipik bir stablecoin yalnızca "fiyatı 1 dolarda tutmayı" hedefler. Bir Yield-bearing Stablecoin buna "sadece elinizde tutarak büyüme" özelliğini ekler. StandX\'in DUSD\'si tam olarak budur — staking gibi ek adımlar gerekmez. İster cüzdanınızda bırakın ister Perps için marj olarak kullanın, geçerlidir.'],
   'yield': ['Yield',
     'DUSD tutmak veya bir Position tutmak gibi eylemlere dayalı olarak elde ettiğiniz sürekli gelir.',
-    'StandX\'in Yield\'i tek bir şey değildir — üç katmana ayrılır: DUSD Yield, Position Yield ve Maker Yield. Her biri farklı bir şeyi değerlendirir (tutulan miktar, tutma süresi, katkıda bulunulan likidite) ve üçü de ortak bir Trading Fees havuzundan dağıtılır.'],
+    'StandX\'in Yield\'i tek bir şey değildir — üç katmana ayrılır: DUSD Yield, Position Yield ve Maker Yield. Her biri farklı bir şeyi değerlendirir (tutulan miktar, tutma süresi, katkıda bulunulan likidite) ve üçü de kendi fee-routing mekanizması aracılığıyla Trading Fees gelirinden dağıtılır.'],
   'margin': ['Margin',
     'Bir Position\'ı sürdürmek için teminat olarak yatırılan fonlar.',
     'Margin, bir Position\'ın kâr ve zararıyla birlikte artar ve azalır. StandX\'te DUSD, Margin olarak kullanılır ve teminat olarak kilitliyken bile Yield almaya devam eder — ayırt edici bir özellik. Margin seviyeleri sürekli olarak Mark Price\'a göre değerlendirilir ve sürdürme eşiğinin altına düşmek zorunlu tasfiye sürecini başlatır.'],
@@ -5564,10 +5564,10 @@ const termsTr = {
     'Sürdürme eşiği sürekli olarak Mark Price\'a göre değerlendirilir. Eşiğin aşıldığı anda hemen ödenmez — Order Book → Shield Vault → ADL şeklinde aşamalı bir savunma yapısı içinde işlenir.'],
   'trading-fees': ['Trading Fees',
     'StandX\'in Perps\'teki işlem faaliyeti için aldığı ücretler. Bunun bir kısmı birden fazla Yield\'e dağıtılır.',
-    'Trading Fees, üç katmana dağıtılan ortak kaynaktır: Position Yield (SIP-2), DUSD Yield (SIP-3) ve Maker Yield (SIP-5A). İşlem ne kadar aktif olursa, her üç Yield\'in de genel seviyesini o kadar etkiler.'],
+    'Trading Fees, her mekanizmanın kendi fee-routing\'ine göre üç katmana dağıtılır: Position Yield (SIP-2), DUSD Yield (SIP-3) ve Maker Yield (SIP-5A). Her bir akış, tek bir ortak havuzda birleştirilmek yerine bağımsız olarak muhasebeleştirilir ve sonuçlandırılır. İşlem faaliyetinden doğan ücret geliri, bu Yield mekanizmalarının her birine ayrılan kaynağı etkileyebilir.'],
   'proximity': ['Proximity',
     'Bir emrin fiyatının Mark Price\'a ne kadar yakın olduğunun bir ölçüsü. Ne kadar yakınsa, Order Book istikrarına o kadar katkıda bulunduğu düşünülür.',
-    'Bu, Maker Hours\'u oluşturan üç faktörden biridir. Fiyata daha yakın emir vermek, daha az sermayeyle daha yüksek bir değerlendirme (Maker Hours) elde etmenizi sağlar, bu da fazla sermayesi olmayan bir Maker\'ın bile doğru emir yerleştirmesiyle çok daha fazla sermayesi olan bir Maker ile eşdeğer bir değerlendirme elde edebileceği anlamına gelir.'],
+    'Bu, Maker Hours\'u oluşturan üç faktörden biridir. Fiyata daha yakın emir vermek, daha az sermayeyle daha yüksek bir değerlendirme (Maker Hours) elde etmenizi sağlar.'],
   'capital-efficiency': ['Sermaye Verimliliği Fikri',
     'Belirli bir değerlendirmeye ulaşmak için gereken sermaye miktarının, emir verme şeklinize (büyüklük ve fiyata yakınlık) göre değiştiği fikri.',
     'Bu fikir, Maker Hours\'un tasarımına yansımıştır. Değerlendirme yalnızca sahip olduğunuz sermaye miktarıyla belirlenmek yerine, Mark Price\'a Yakınlığı (Proximity) artırmak, yalnızca sermayeye bağlı olmayan bir değerlendirme elde etmenizi sağlar. Bununla birlikte, gerçek değerlendirme Tier ve saatlik üst limitler gibi diğer faktörleri de içerir.'],
@@ -5652,7 +5652,7 @@ const termsPt = {
     'Uma stablecoin comum busca apenas "manter o preço em $1". Uma Yield-bearing Stablecoin combina isso com um recurso de rendimento que cresce simplesmente por ser mantida. O DUSD da StandX é exatamente isso — nenhuma etapa adicional como staking é necessária. Aplica-se tanto se você deixá-lo na carteira quanto se usá-lo como margem na Perps.'],
   'yield': ['Yield',
     'Rendimento contínuo que você recebe com base em ações como manter DUSD ou manter uma Position.',
-    'O Yield da StandX não é uma coisa só — ele é dividido em três camadas: DUSD Yield, Position Yield e Maker Yield. Cada uma avalia algo diferente (quantidade mantida, tempo de posse, liquidez contribuída), e todas as três são distribuídas a partir de um pool comum de Trading Fees.'],
+    'O Yield da StandX não é uma coisa só — ele é dividido em três camadas: DUSD Yield, Position Yield e Maker Yield. Cada uma avalia algo diferente (quantidade mantida, tempo de posse, liquidez contribuída), e todas as três são distribuídas a partir da receita de Trading Fees através de seus respectivos mecanismos de fee-routing.'],
   'margin': ['Margem (Margin)',
     'Fundos depositados como garantia para manter uma Position.',
     'A Margem sobe e desce junto com o lucro e prejuízo da Position. Na StandX, o DUSD é usado como Margem, e continua elegível para Yield mesmo enquanto está bloqueado como garantia — uma característica distintiva. Os níveis de Margem são constantemente avaliados em relação ao Mark Price, e cair abaixo da margem de manutenção inicia o processo de liquidação forçada.'],
@@ -5736,10 +5736,10 @@ const termsPt = {
     'A margem de manutenção é constantemente avaliada em relação ao Mark Price. Ela não é executada no instante em que é ultrapassada — é tratada através da estrutura de defesa em etapas: Order Book → Shield Vault → ADL.'],
   'trading-fees': ['Trading Fees',
     'Taxas que a StandX recebe pela atividade de trading na Perps. Parte disso é distribuída entre múltiplos Yields.',
-    'As Trading Fees são a fonte comum distribuída entre três camadas: Position Yield (SIP-2), DUSD Yield (SIP-3) e Maker Yield (SIP-5A). Quanto mais ativo o trading, mais isso afeta o nível geral dos três Yields.'],
+    'As Trading Fees são distribuídas entre três camadas — Position Yield (SIP-2), DUSD Yield (SIP-3) e Maker Yield (SIP-5A) — de acordo com o fee-routing próprio de cada mecanismo. Cada um desses fluxos é contabilizado e liquidado de forma independente, em vez de serem reunidos em um único pool comum. A receita de taxas gerada pela atividade de trading pode afetar os recursos disponíveis para cada um desses mecanismos de Yield.'],
   'proximity': ['Proximity',
     'Uma medida de quão próximo o preço de uma ordem está do Mark Price. Quanto mais próximo, mais se considera que contribui para a estabilidade do Order Book.',
-    'Este é um dos três fatores que compõem o Maker Hours. Colocar ordens mais próximas do preço garante uma avaliação mais alta (Maker Hours) com menos capital, o que significa que um Maker sem muito capital pode, com o posicionamento certo das ordens, alcançar uma avaliação comparável a um com muito mais capital.'],
+    'Este é um dos três fatores que compõem o Maker Hours. Colocar ordens mais próximas do preço garante uma avaliação mais alta (Maker Hours) com menos capital.'],
   'capital-efficiency': ['Eficiência de Capital',
     'A ideia de que a quantidade de capital necessária para obter uma determinada avaliação varia dependendo de como você coloca suas ordens (tamanho e proximidade ao preço).',
     'Essa ideia está refletida no design do Maker Hours. Em vez de ser determinada puramente por quanto capital você tem, aumentar a Proximity ao Mark Price permite alcançar uma avaliação que não depende apenas do capital. Dito isso, a avaliação real também envolve outros fatores, como Tier e limites por hora.'],
